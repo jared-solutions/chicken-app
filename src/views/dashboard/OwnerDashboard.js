@@ -1124,7 +1124,69 @@ ${data.daily_summaries.map(day =>
       boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
       border: '1px solid rgba(255,255,255,0.2)'
     }}>
-      {/* Header Section */}
+      {/* Menu Navbar */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 1,
+        p: 2,
+        mb: 3,
+        bgcolor: 'white',
+        borderRadius: '20px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+      }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a5f2a' }}>
+          🏠 JOE FARM
+        </Typography>
+        
+        {/* Navigation Buttons */}
+        <Box display="flex" alignItems="center" gap={1} sx={{ flexWrap: 'wrap' }}>
+          <Button 
+            variant={tabValue === 0 ? 'contained' : 'outlined'}
+            color="success"
+            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTabValue(0); }}
+            sx={{ borderRadius: '20px' }}
+          >
+            Overview
+          </Button>
+          <Button 
+            variant={tabValue === 1 ? 'contained' : 'outlined'}
+            color="success"
+            onClick={() => setTabValue(1)}
+            sx={{ borderRadius: '20px' }}
+          >
+            Daily Task
+          </Button>
+          <Button 
+            variant={tabValue === 2 ? 'contained' : 'outlined'}
+            color="success"
+            onClick={() => setTabValue(2)}
+            sx={{ borderRadius: '20px' }}
+          >
+            Report
+          </Button>
+          
+          {/* Notification Bell */}
+          <Tooltip title="Notifications">
+            <IconButton onClick={() => setShowNotifications(!showNotifications)}>
+              <Badge badgeContent={pendingUsers.length} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+          
+          {/* Menu Button */}
+          <Tooltip title="More Options">
+            <IconButton onClick={() => setMobileMenuOpen(true)} sx={{ bgcolor: '#1a5f2a', color: 'white', '&:hover': { bgcolor: '#2d8a3e' } }}>
+              <MenuIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Box>
+      
+      {/* Notification Popup */}
       <Box sx={{
         background: 'linear-gradient(135deg, #1a5f2a 0%, #2d8a3e 50%, #1a5f2a 100%)',
         color: 'white',
