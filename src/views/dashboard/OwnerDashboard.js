@@ -24,7 +24,6 @@ import {
   Tooltip,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-// import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
@@ -59,6 +58,7 @@ const OwnerDashboard = () => {
       }
     }
   }, []);
+  // eslint-disable-next-line no-unused-vars
   const [feedConsumptionKg, setFeedConsumptionKg] = useState('');
   const [saleData, setSaleData] = useState({ trays_sold: '', price_per_tray: '', date: new Date().toISOString().split('T')[0] });
   // eslint-disable-next-line no-unused-vars
@@ -66,6 +66,7 @@ const OwnerDashboard = () => {
   // eslint-disable-next-line no-unused-vars
   const [feedConsumptionData, setFeedConsumptionData] = useState({ quantity_used_kg: '', date: new Date().toISOString().split('T')[0] });
   const [expenseData, setExpenseData] = useState({ expense_type: '', amount: '', description: '', date: new Date().toISOString().split('T')[0], sacks: '', kg_per_sack: '70' });
+  // eslint-disable-next-line no-unused-vars
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -76,8 +77,11 @@ const OwnerDashboard = () => {
     currentPassword: ''
   });
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [reportContent, setReportContent] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [reportTitle, setReportTitle] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [eggCollectionDialogOpen, setEggCollectionDialogOpen] = useState(false);
   const [salesDialogOpen, setSalesDialogOpen] = useState(false);
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
@@ -85,12 +89,14 @@ const OwnerDashboard = () => {
   const [feedDialogOpen, setFeedDialogOpen] = useState(false);
   const [feedConsumptionDialogOpen, setFeedConsumptionDialogOpen] = useState(false);
   const [chickenCountDialogOpen, setChickenCountDialogOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const [settingsTabValue, setSettingsTabValue] = useState(0);
   const [users, setUsers] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]);  // Stores notification messages
   const [showNotifications, setShowNotifications] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [showUsersDialog, setShowUsersDialog] = useState(false);
   const [feedPerChicken, setFeedPerChicken] = useState('');
   const [totalDailyFeed, setTotalDailyFeed] = useState('');
@@ -811,6 +817,7 @@ const OwnerDashboard = () => {
           content += 'MEDICAL RECORDS:\n' + data.medical_records.map(record =>
             `${record.date}: ${record.chicken__tag_id || 'General'} - ${record.treatment_type} (${record.description}) - Ksh ${record.cost}`
           ).join('\n') + '\n\n';
+          // eslint-disable-next-line no-unused-vars
           content += 'TREATMENT TYPES:\n' + data.treatment_types.map(type =>
             `${type.treatment_type}: ${type.count} records, Total Cost: Ksh ${type.total_cost}`
           ).join('\n');
@@ -1004,6 +1011,7 @@ ${data.daily_summaries.map(day =>
           printWindow.document.close();
         }
       } else if (reportType === 'detailed') {
+        // eslint-disable-next-line no-unused-vars
         // Open detailed report as PDF in new window
         const reportUrl = selectedDate ? `${url}?date=${selectedDate}` : url;
         const token = localStorage.getItem('token');
