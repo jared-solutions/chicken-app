@@ -141,7 +141,7 @@ const OwnerDashboard = () => {
     if (settingsTabValue === 3 && showProfileSettings) {
       fetchUsers();
     }
-  }, [settingsTabValue, showProfileSettings]);
+  }, [settingsTabValue, showProfileSettings, fetchUsers]);
 
   // Periodically check for pending users (every 30 seconds)
   useEffect(() => {
@@ -541,7 +541,7 @@ const OwnerDashboard = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/auth/users/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/users/`, {
         headers: {
           'Authorization': `Token ${token}`,
         },
@@ -552,10 +552,10 @@ const OwnerDashboard = () => {
         setUsers(data);
         fetchPendingUsers(); // Also fetch pending users
       } else {
-        alert('Failed to fetch users');
+        console.log('Failed to fetch users');
       }
     } catch (error) {
-      alert('Error fetching users');
+      console.log('Error fetching users');
     }
   };
 
