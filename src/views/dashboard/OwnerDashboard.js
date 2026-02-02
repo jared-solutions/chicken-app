@@ -22,8 +22,19 @@ import {
   IconButton,
   Badge,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import PeopleIcon from '@mui/icons-material/People';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import SettingsIcon from '@mui/icons-material/Settings';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
@@ -1112,45 +1123,71 @@ ${data.daily_summaries.map(day =>
     }}>
       {/* Header Section */}
       <Box sx={{
-        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%)',
+        background: 'linear-gradient(135deg, #1a5f2a 0%, #2d8a3e 50%, #1a5f2a 100%)',
         color: 'white',
-        p: 3,
+        p: { xs: 2, sm: 3 },
         mb: 3,
-        borderRadius: '0 0 20px 20px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255,255,255,0.2)'
+        borderRadius: '0 0 30px 30px',
+        boxShadow: '0 8px 32px rgba(26, 95, 42, 0.3)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: '-50%',
+          left: '-50%',
+          width: '200%',
+          height: '200%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%)',
+          animation: 'pulse 4s ease-in-out infinite',
+        },
+        '@keyframes pulse': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.1)' },
+        },
       }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ position: 'relative', zIndex: 1 }}>
           <Box>
-            <Typography variant="h5" sx={{
-              fontWeight: 'bold',
+            <Typography variant="h6" sx={{
+              fontWeight: 600,
               mb: 1,
-              fontSize: '1.2rem',
-              textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
-              color: '#90EE90'
+              fontSize: { xs: '1rem', sm: '1.2rem' },
+              color: '#90EE90',
+              letterSpacing: '0.5px',
             }}>
               Welcome back{currentUser ? `, ${currentUser.username || currentUser.first_name || currentUser.email.split('@')[0]}` : ''}!
             </Typography>
-            <Typography variant="h4" sx={{
-              fontWeight: 'bold',
-              mb: 1,
-              fontSize: '2.5rem',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-              letterSpacing: '2px',
-              color: '#ff6b35'
+            <Typography variant="h3" sx={{
+              fontWeight: 800,
+              mb: 0.5,
+              fontSize: { xs: '1.8rem', sm: '2.5rem' },
+              background: 'linear-gradient(180deg, #ffffff 0%, #e8f5e9 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: 'none',
+              letterSpacing: '1px',
             }}>
-              Date: {new Date().toLocaleDateString('en-GB', {
+              🏠 JOE FARM
+            </Typography>
+            <Typography variant="body1" sx={{ 
+              opacity: 0.95,
+              fontSize: { xs: '0.85rem', sm: '1rem' },
+              color: '#fff',
+            }}>
+              Chicken Farm Management
+            </Typography>
+            <Typography variant="h5" sx={{
+              fontWeight: 600,
+              mt: 1.5,
+              fontSize: { xs: '1.1rem', sm: '1.3rem' },
+              color: '#ffeb3b',
+            }}>
+              📅 {new Date().toLocaleDateString('en-GB', {
+                weekday: 'long',
                 day: '2-digit',
-                month: '2-digit',
+                month: 'long',
                 year: 'numeric'
               })}
-            </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
-              🏠 Joe Farm Dashboard
-            </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              Welcome back! Manage your chicken farm operations efficiently
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={2}>
@@ -2947,6 +2984,44 @@ ${data.daily_summaries.map(day =>
         <Button onClick={() => setReportDialogOpen(false)}>Close</Button>
       </DialogActions>
     </Dialog>
+      {/* Bottom Navigation Bar for Mobile */}
+      <Box sx={{ 
+        display: { xs: 'flex', md: 'none' },
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        bgcolor: '#fff',
+        borderTop: '1px solid #e0e0e0',
+        boxShadow: '0 -2px 10px rgba(0,0,0,0.08)',
+        zIndex: 1000,
+        justifyContent: 'space-around',
+        py: 1,
+        px: 1,
+      }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <DashboardIcon sx={{ color: '#667eea', fontSize: 26 }} />
+          <Typography variant="caption" sx={{ color: '#667eea', fontSize: 10, fontWeight: 500 }}>Overview</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => setTabValue(1)}>
+          <AssignmentIcon sx={{ color: '#666', fontSize: 26 }} />
+          <Typography variant="caption" sx={{ color: '#666', fontSize: 10, fontWeight: 500 }}>Daily Task</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => setTabValue(2)}>
+          <AssessmentIcon sx={{ color: '#666', fontSize: 26 }} />
+          <Typography variant="caption" sx={{ color: '#666', fontSize: 10, fontWeight: 500 }}>Report</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => setShowProfileSettings(true)}>
+          <SettingsIcon sx={{ color: '#666', fontSize: 26 }} />
+          <Typography variant="caption" sx={{ color: '#666', fontSize: 10, fontWeight: 500 }}>Settings</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/signin'; }}>
+          <LogoutIcon sx={{ color: '#e74c3c', fontSize: 26 }} />
+          <Typography variant="caption" sx={{ color: '#e74c3c', fontSize: 10, fontWeight: 500 }}>Logout</Typography>
+        </Box>
+      </Box>
+      {/* Add padding at bottom for mobile nav */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, height: '70px' }} />
   </Box>
 );
 };
