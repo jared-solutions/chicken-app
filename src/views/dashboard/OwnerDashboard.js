@@ -1298,52 +1298,6 @@ ${data.daily_summaries.map(day =>
                 )}
               </Box>
             )}
-            <Button
-              variant="outlined"
-              sx={{
-                color: 'white',
-                borderColor: 'rgba(255,255,255,0.5)',
-                borderRadius: '25px',
-                padding: '8px 20px',
-                backdropFilter: 'blur(10px)',
-                '&:hover': {
-                  borderColor: 'white',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  transform: 'translateY(-2px) scale(1.05)',
-                  boxShadow: '0 8px 25px rgba(255,255,255,0.2)'
-                },
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onClick={() => setShowProfileSettings(true)}
-              startIcon={<span>⚙️</span>}
-            >
-              Settings
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                color: 'white',
-                borderColor: 'rgba(255,255,255,0.5)',
-                borderRadius: '25px',
-                padding: '8px 20px',
-                backdropFilter: 'blur(10px)',
-                '&:hover': {
-                  borderColor: '#ff4757',
-                  backgroundColor: 'rgba(255,71,87,0.1)',
-                  transform: 'translateY(-2px) scale(1.05)',
-                  boxShadow: '0 8px 25px rgba(255,71,87,0.3)'
-                },
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onClick={() => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/signin';
-              }}
-              startIcon={<span>🚪</span>}
-            >
-              Logout
-            </Button>
           </Box>
         </Box>
       </Box>
