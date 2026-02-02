@@ -3084,45 +3084,7 @@ ${data.daily_summaries.map(day =>
           </Box>
         </Box>
       </Drawer>
-      {/* Bottom Navigation Bar for Mobile */}
-      <Box sx={{ 
-        display: { xs: 'flex', md: 'none' },
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        bgcolor: '#fff',
-        borderTop: '1px solid #e0e0e0',
-        boxShadow: '0 -2px 10px rgba(0,0,0,0.08)',
-        zIndex: 1000,
-        justifyContent: 'space-around',
-        py: 1,
-        px: 1,
-      }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <DashboardIcon sx={{ color: '#667eea', fontSize: 26 }} />
-          <Typography variant="caption" sx={{ color: '#667eea', fontSize: 10, fontWeight: 500 }}>Overview</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => setTabValue(1)}>
-          <AssignmentIcon sx={{ color: '#666', fontSize: 26 }} />
-          <Typography variant="caption" sx={{ color: '#666', fontSize: 10, fontWeight: 500 }}>Daily Task</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => setTabValue(2)}>
-          <AssessmentIcon sx={{ color: '#666', fontSize: 26 }} />
-          <Typography variant="caption" sx={{ color: '#666', fontSize: 10, fontWeight: 500 }}>Report</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => setShowProfileSettings(true)}>
-          <SettingsIcon sx={{ color: '#666', fontSize: 26 }} />
-          <Typography variant="caption" sx={{ color: '#666', fontSize: 10, fontWeight: 500 }}>Settings</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', '&:hover': { transform: 'scale(1.05)' }, transition: 'transform 0.2s' }} onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/signin'; }}>
-          <LogoutIcon sx={{ color: '#e74c3c', fontSize: 26 }} />
-          <Typography variant="caption" sx={{ color: '#e74c3c', fontSize: 10, fontWeight: 500 }}>Logout</Typography>
-        </Box>
-      </Box>
-      {/* Add padding at bottom for mobile nav */}
-      <Box sx={{ display: { xs: 'block', md: 'none' }, height: '70px' }} />
-  </Box>
+    </Box>
 );
 };
 export default OwnerDashboard;
