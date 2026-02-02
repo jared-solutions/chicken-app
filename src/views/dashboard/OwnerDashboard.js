@@ -35,6 +35,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
 
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
@@ -107,6 +109,7 @@ const OwnerDashboard = () => {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);  // Stores notification messages
   const [showNotifications, setShowNotifications] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [showUsersDialog, setShowUsersDialog] = useState(false);
   const [feedPerChicken, setFeedPerChicken] = useState('');
@@ -1191,6 +1194,15 @@ ${data.daily_summaries.map(day =>
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={2}>
+            {/* Menu Button for Mobile */}
+            <Tooltip title="Menu">
+              <IconButton
+                onClick={() => setMobileMenuOpen(true)}
+                sx={{ color: 'white' }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Tooltip>
             {/* Notification Bell */}
             <Tooltip title="Notifications">
               <IconButton
@@ -2984,6 +2996,94 @@ ${data.daily_summaries.map(day =>
         <Button onClick={() => setReportDialogOpen(false)}>Close</Button>
       </DialogActions>
     </Dialog>
+      {/* Mobile Menu Drawer */}
+      <Drawer anchor="right" open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
+        <Box sx={{ width: 280, pt: 3, px: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a5f2a', mb: 3, textAlign: 'center' }}>
+            🏠 JOE FARM
+          </Typography>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              p: 2, 
+              mb: 1, 
+              borderRadius: 2, 
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f5f5f5' },
+              transition: 'all 0.2s'
+            }}
+            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileMenuOpen(false); }}
+          >
+            <DashboardIcon sx={{ color: '#667eea', mr: 2 }} />
+            <Typography>Overview</Typography>
+          </Box>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              p: 2, 
+              mb: 1, 
+              borderRadius: 2, 
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f5f5f5' },
+              transition: 'all 0.2s'
+            }}
+            onClick={() => { setTabValue(1); setMobileMenuOpen(false); }}
+          >
+            <AssignmentIcon sx={{ color: '#ff9800', mr: 2 }} />
+            <Typography>Daily Tasks</Typography>
+          </Box>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              p: 2, 
+              mb: 1, 
+              borderRadius: 2, 
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f5f5f5' },
+              transition: 'all 0.2s'
+            }}
+            onClick={() => { setTabValue(2); setMobileMenuOpen(false); }}
+          >
+            <AssessmentIcon sx={{ color: '#4caf50', mr: 2 }} />
+            <Typography>Reports</Typography>
+          </Box>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              p: 2, 
+              mb: 1, 
+              borderRadius: 2, 
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f5f5f5' },
+              transition: 'all 0.2s'
+            }}
+            onClick={() => { setShowProfileSettings(true); setMobileMenuOpen(false); }}
+          >
+            <SettingsIcon sx={{ color: '#607d8b', mr: 2 }} />
+            <Typography>Settings</Typography>
+          </Box>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              p: 2, 
+              mb: 1, 
+              borderRadius: 2, 
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#ffebee' },
+              transition: 'all 0.2s'
+            }}
+            onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/signin'; }}
+          >
+            <LogoutIcon sx={{ color: '#e74c3c', mr: 2 }} />
+            <Typography sx={{ color: '#e74c3c' }}>Logout</Typography>
+          </Box>
+        </Box>
+      </Drawer>
       {/* Bottom Navigation Bar for Mobile */}
       <Box sx={{ 
         display: { xs: 'flex', md: 'none' },
