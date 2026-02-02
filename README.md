@@ -1,70 +1,136 @@
-# Getting Started with Create React App
+# Jared Farm - Chicken Farm Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive web application for managing Jared Farm's chicken farm operations, including egg production tracking, sales management, expense tracking, and detailed analytics.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### 🏠 Dashboard
+- Real-time farm overview with key performance indicators
+- Today's egg production with detailed cage/partition breakdown
+- Store inventory tracking
+- Flock size monitoring
+- Monthly expense tracking
 
-### `npm start`
+### 📝 Daily Tasks
+- **Egg Collection**: Record daily egg collection from all cages
+- **Sales Management**: Track egg sales and revenue
+- **Expense Tracking**: Record daily farm expenses
+- **Medical Records**: Track chicken health and treatments
+- **Feed Management**: Record feed purchases and consumption
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 📋 Reports & Analytics
+- **Performance Reports**: Detailed egg collection performance
+- **Sales Reports**: Revenue analysis and sales history
+- **Expense Reports**: Cost tracking and analysis
+- **Medical Reports**: Health and treatment records
+- **Egg Collection Tables**: Visual tables showing egg distribution by cage and partition
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🐔 Farm Management
+- User management (owners and workers)
+- Chicken count tracking
+- Feed consumption monitoring
+- Settings and configuration
 
-### `npm test`
+## Technology Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Frontend**: React.js with Material-UI
+- **Backend**: Django REST Framework
+- **Database**: PostgreSQL
+- **Authentication**: Token-based authentication
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
+- Node.js (v14 or higher)
+- Python (v3.8 or higher)
+- PostgreSQL
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd nyangaresi-farm
+   ```
 
-### `npm run eject`
+2. **Install frontend dependencies**
+   ```bash
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **Install backend dependencies**
+   ```bash
+   cd ../chiken-backend
+   pip install -r requirements.txt
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. **Set up the database**
+   ```bash
+   python manage.py migrate
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+5. **Start the development servers**
+   ```bash
+   # Backend (in chiken-backend directory)
+   python manage.py runserver
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   # Frontend (in nyangaresi-farm directory)
+   npm start
+   ```
 
-## Learn More
+6. **Access the application**
+   Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Usage
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### For Owners
+- Access the owner dashboard for comprehensive farm management
+- View detailed analytics and reports
+- Manage users and farm settings
+- Track all farm operations and financials
 
-### Code Splitting
+### For Workers
+- Record daily egg collection
+- Submit data for processing
+- View basic farm information
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Key Features
 
-### Analyzing the Bundle Size
+### Egg Production Tracking
+- Real-time egg collection recording
+- Cage-by-cage and partition-by-partition tracking
+- Shade egg collection
+- Historical data analysis
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Financial Management
+- Sales tracking with pricing
+- Expense categorization
+- Profit/loss calculations
+- Feed cost monitoring
 
-### Making a Progressive Web App
+### Health Management
+- Medical treatment records
+- Vaccination tracking
+- Health expense monitoring
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Analytics & Reporting
+- Performance dashboards
+- Trend analysis
+- PDF report generation
+- Data export capabilities
 
-### Advanced Configuration
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-### Deployment
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+This project is proprietary software for Jared Farm.
 
-### `npm run build` fails to minify
+## Support
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For support or questions, please contact the farm management team.

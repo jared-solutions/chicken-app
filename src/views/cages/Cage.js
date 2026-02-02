@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Box, Button, Card, CardContent, Grid, Typography, TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Card, CardContent, Grid, Typography, TextField } from '@mui/material';
 
-const Cage = ({ cage }) => {
-  const [alertActive, setAlert] = useState(false);
+const Cage = ({ cage, onEggDataChange }) => {
   const [eggData, setEggData] = useState({});
   const [errorMessages, setErrorMessages] = useState({});
 
-  useEffect(() => {
-    setAlert(true);
-  }, []);
-
-  const handleEggChange = (cageId, partitionIndex, rowIndex, colIndex, value) => {
+  const handleEggChange = (cageId, partitionIndex, rowIndex, colIndex, value, event) => {
     const numValue = parseInt(value, 10);
     if (numValue > 4) {
       setErrorMessages((prevErrors) => ({
@@ -26,111 +21,184 @@ const Cage = ({ cage }) => {
       return newErrors;
     });
 
-    setEggData((prevData) => ({
-      ...prevData,
-      [`${cageId}-${partitionIndex}-${rowIndex}-${colIndex}`]: numValue || '',
-    }));
+    setEggData((prevData) => {
+      const newData = {
+        ...prevData,
+        [`${cageId}-${partitionIndex}-${rowIndex}-${colIndex}`]: numValue || '',
+      };
+      return newData;
+    });
+
+    // Pass the updated egg data to parent component with box number
+    if (onEggDataChange) {
+      onEggDataChange(prevData => ({
+        ...prevData,
+        [cageId]: {
+          ...prevData[cageId],
+          [`${cageId}-${partitionIndex}-${rowIndex}-${colIndex}`]: {
+            count: numValue || 0,
+            boxNumber: colIndex + 1, // Box numbers are 1-based
+            partitionIndex: partitionIndex,
+            cageId: cageId
+          },
+        }
+      }));
+    }
+
+    // Auto-focus next input field if a number was entered
+    if (numValue >= 0 && numValue <= 4 && event) {
+      setTimeout(() => {
+        const currentInput = event.target;
+        const allInputs = document.querySelectorAll('input[type="number"]');
+        const currentIndex = Array.from(allInputs).indexOf(currentInput);
+
+        if (currentIndex !== -1 && currentIndex < allInputs.length - 1) {
+          const nextInput = allInputs[currentIndex + 1];
+          if (nextInput) {
+            nextInput.focus();
+            nextInput.select();
+          }
+        }
+      }, 100);
+    }
   };
 
-  const groupPartitions = (partitions) => {
-    return partitions.map((partition, partitionIndex) => {
-      return {
-        ...partition,
+  const groupPartitions = (partitions, cageType) => {
+    if (cageType === 'combined') {
+      // For combined cage: 4x8 layout (4 rows x 8 columns) - numbered 1-8, repeated 4 times
+      return [{
+        ...partitions[0],
         rows: Array.from({ length: 4 }, (_, rowIndex) => {
           return {
-            columns: Array.from({ length: 4 }, (_, colIndex) => {
-              return { id: `${partitionIndex}-${rowIndex}-${colIndex}`, chickens: 4 };
+            columns: Array.from({ length: 8 }, (_, colIndex) => {
+              return { id: `0-${rowIndex}-${colIndex}`, chickens: colIndex + 1 };
             })
           };
         })
-      };
-    });
+      }];
+    } else {
+      // For standard cage: 4x4 layout (4 rows x 4 columns) per partition - numbered 1-4, repeated 4 times
+      return partitions.map((partition, partitionIndex) => {
+        return {
+          ...partition,
+          rows: Array.from({ length: 4 }, (_, rowIndex) => {
+            return {
+              columns: Array.from({ length: 4 }, (_, colIndex) => {
+                return { id: `${partitionIndex}-${rowIndex}-${colIndex}`, chickens: colIndex + 1 };
+              })
+            };
+          })
+        };
+      });
+    }
   };
 
-  const handleSubmit = async () => {
-    const submissionData = {
-      cageId: cage.id,
-      partitions: cage.partitions.map((partition, partitionIndex) => ({
-        partitionIndex: partitionIndex + 1,
-        eggsCollected: Object.entries(eggData)
-          .filter(([key]) => key.startsWith(`${cage.id}-${partitionIndex}-`))
-          .map(([key, value]) => ({ key, value })),
-        comments: partition.comments,
-      })),
-    };
-    console.log("submission data",submissionData);
-
-     try {
-       const response = await fetch('/api/submit-cage', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(submissionData),
-       });
-
-       if (response.ok) {
-         alert('Cage data submitted successfully!');
-       } else {
-         setAlert(true);
-         alert('Failed to submit cage data.');
-       }
-     } catch (error) {
-       console.error('Error submitting data:', error);
-       alert('An error occurred while submitting data.');
-     }
-  };
+  // Removed individual cage submit function - now using centralized submission
 
   return (
-    <Box p={3}>
-      {alertActive && (
-        <Alert variant="outlined" severity="success" sx={{ mb: 2 }}>
-          This is an outlined success alert.
-        </Alert>
-      )}
-      <Typography variant="h4" gutterBottom>
-        Cage {cage.id}
+    <Box p={2} sx={{ maxWidth: '100%', overflowX: 'auto' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+        Joe Farm - Cage {cage.id}
       </Typography>
-      {["Front Partition", "Back Partition"].map((partitionLabel, partitionIdx) => (
-        <Box key={partitionIdx} mt={4}>
-          <Typography variant="h5" gutterBottom>
-            {partitionLabel}
-          </Typography>
-          <Grid container spacing={2}>
-            {groupPartitions([cage.partitions[partitionIdx]]).map((partition, partitionIndex) => (
-              <Grid item xs={12} key={partitionIndex}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography variant="h6">Partition {partitionIndex + 1}</Typography>
-                    {partition.rows.map((row, rowIndex) => (
-                      <Box key={rowIndex} display="flex" justifyContent="space-around" mb={2}>
-                        {row.columns.map((col, colIndex) => (
-                          <Box key={col.id} p={1} border={1} borderRadius={2} textAlign="center">
-                            <Typography>{col.chickens} Chickens</Typography>
-                            <TextField
-                              type="number"
-                              label="Eggs"
-                              variant="outlined"
-                              size="small"
-                              value={eggData[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`] || ''}
-                              onChange={(e) => handleEggChange(cage.id, partitionIdx, rowIndex, colIndex, e.target.value)}
-                              error={!!errorMessages[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`]}
-                              helperText={errorMessages[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`] || ''}
-                            />
+      {cage.type === 'combined' ? (
+        // Combined cage: front and back partitions shown separately but both 4x4
+        <>
+          {["Front Partition", "Back Partition"].map((partitionLabel, partitionIdx) => (
+            <Box key={partitionIdx} mt={4}>
+              <Typography variant="h5" gutterBottom>
+                {partitionLabel}
+              </Typography>
+              <Grid container spacing={2}>
+                {groupPartitions([cage.partitions[partitionIdx]], cage.type).map((partition, partitionIndex) => (
+                  <Grid item xs={12} key={partitionIndex}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography variant="h6">Partition {partitionIndex + 1}</Typography>
+                        {partition.rows.map((row, rowIndex) => (
+                          <Box key={rowIndex} mb={1} sx={{ overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { height: '4px' }, scrollBehavior: 'smooth' }}>
+                            <Box display="flex" gap={0.5} sx={{ width: 'max-content', pl: 1, pr: 1 }}>
+                              {row.columns.map((col, colIndex) => (
+                                <Box key={col.id} p={0.5} border={1} borderRadius={1} textAlign="center" width="55px" flexShrink={0}>
+                                  <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>{col.chickens}</Typography>
+                                  <TextField
+                                    type="number"
+                                    label=""
+                                    variant="outlined"
+                                    size="small"
+                                    value={eggData[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`] || ''}
+                                    onChange={(e) => handleEggChange(cage.id, partitionIdx, rowIndex, colIndex, e.target.value, e)}
+                                    error={!!errorMessages[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`]}
+                                    helperText={errorMessages[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`] || ''}
+                                    inputProps={{
+                                      style: { textAlign: 'center', padding: '2px', fontSize: '0.8rem' },
+                                      min: 0,
+                                      max: 4
+                                    }}
+                                    sx={{ '& .MuiInputBase-input': { padding: '2px 4px' } }}
+                                  />
+                                </Box>
+                              ))}
+                            </Box>
                           </Box>
                         ))}
-                      </Box>
-                    ))}
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-        </Box>
-      ))}
-      <Box mt={4} textAlign="center">
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Submit Cage {cage.id}
-        </Button>
-      </Box>
+            </Box>
+          ))}
+        </>
+      ) : (
+        // Standard cage: separate front and back partitions
+        <>
+          {["Front Partition", "Back Partition"].map((partitionLabel, partitionIdx) => (
+            <Box key={partitionIdx} mt={4}>
+              <Typography variant="h5" gutterBottom>
+                {partitionLabel}
+              </Typography>
+              <Grid container spacing={2}>
+                {groupPartitions([cage.partitions[partitionIdx]], cage.type).map((partition, partitionIndex) => (
+                  <Grid item xs={12} key={partitionIndex}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography variant="h6">Partition {partitionIndex + 1}</Typography>
+                        {partition.rows.map((row, rowIndex) => (
+                          <Box key={rowIndex} mb={1} sx={{ overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { height: '4px' }, scrollBehavior: 'smooth' }}>
+                            <Box display="flex" gap={0.5} sx={{ width: 'max-content', pl: 1, pr: 1 }}>
+                              {row.columns.map((col, colIndex) => (
+                                <Box key={col.id} p={0.5} border={1} borderRadius={1} textAlign="center" width="55px" flexShrink={0}>
+                                  <Typography variant="caption" sx={{ fontSize: '0.7rem' }}>{col.chickens}</Typography>
+                                  <TextField
+                                    type="number"
+                                    label=""
+                                    variant="outlined"
+                                    size="small"
+                                    value={eggData[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`] || ''}
+                                    onChange={(e) => handleEggChange(cage.id, partitionIdx, rowIndex, colIndex, e.target.value, e)}
+                                    error={!!errorMessages[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`]}
+                                    helperText={errorMessages[`${cage.id}-${partitionIdx}-${rowIndex}-${colIndex}`] || ''}
+                                    inputProps={{
+                                      style: { textAlign: 'center', padding: '2px', fontSize: '0.8rem' },
+                                      min: 0,
+                                      max: 4
+                                    }}
+                                    sx={{ '& .MuiInputBase-input': { padding: '2px 4px' } }}
+                                  />
+                                </Box>
+                              ))}
+                            </Box>
+                          </Box>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          ))}
+        </>
+      )}
     </Box>
   );
 };

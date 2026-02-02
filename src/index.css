@@ -21,6 +21,34 @@ body {
   text-align: center;
   color: #f8f1f5;
   font-size: 15px;
+  padding: 10px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.companyname {
+  margin: 0;
+}
+
+.btn-logout {
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 15px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.btn-logout:hover {
+  background-color: #c82333;
 }
 .date-section {
   margin-top: 10px;
@@ -59,16 +87,45 @@ body {
   color: red;
   margin-top: 10px;
   font-size: 15px;
-  
+
+}
+
+.shade-section {
+  margin-top: 30px;
+  padding: 20px;
+  border: 2px solid #28a745;
+  border-radius: 10px;
+  background-color: rgba(40, 167, 69, 0.1);
+  text-align: center;
+}
+
+.shade-section h3 {
+  color: #28a745;
+  margin-bottom: 15px;
+}
+
+.btn-submit-all {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.btn-submit-all:hover {
+  background-color: #218838;
 }
 .sign-in {
-
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
   padding: 20px;
   border-radius: 10px;
   color: white;
-
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sign-in input {
