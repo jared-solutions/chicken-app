@@ -46,11 +46,19 @@ const OwnerDashboard = () => {
     last_name: ''
   });
   const [chickenCount, setChickenCount] = useState('');
-  // Get user from localStorage for welcome message
-  const [currentUser, setCurrentUser] = useState(() => {
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  // Load current user data
+  useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Error parsing user data');
+      }
+    }
+  }, []);
   const [feedConsumptionKg, setFeedConsumptionKg] = useState('');
   const [saleData, setSaleData] = useState({ trays_sold: '', price_per_tray: '', date: new Date().toISOString().split('T')[0] });
   // eslint-disable-next-line no-unused-vars
