@@ -4,8 +4,17 @@ import { Box, Card, CardContent, Grid, Typography, TextField, Button } from '@mu
 // Use environment variable for API base URL, fallback to empty string for relative paths
 const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
+// Helper function to get local date in YYYY-MM-DD format (respects timezone)
+const getLocalDateString = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const RecordedData = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

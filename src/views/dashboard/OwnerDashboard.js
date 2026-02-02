@@ -42,6 +42,15 @@ import Drawer from '@mui/material/Drawer';
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
 
+// Helper function to get local date in YYYY-MM-DD format (respects timezone)
+const getLocalDateString = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const OwnerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,14 +83,14 @@ const OwnerDashboard = () => {
   }, []);
   // eslint-disable-next-line no-unused-vars
   const [feedConsumptionKg, setFeedConsumptionKg] = useState('');
-  const [saleData, setSaleData] = useState({ trays_sold: '', price_per_tray: '', date: new Date().toISOString().split('T')[0] });
+  const [saleData, setSaleData] = useState({ trays_sold: '', price_per_tray: '', date: getLocalDateString() });
   // eslint-disable-next-line no-unused-vars
-  const [feedPurchaseData, setFeedPurchaseData] = useState({ sacks: '', quantity_kg: '', total_cost: '', feed_type: '', date: new Date().toISOString().split('T')[0] });
+  const [feedPurchaseData, setFeedPurchaseData] = useState({ sacks: '', quantity_kg: '', total_cost: '', feed_type: '', date: getLocalDateString() });
   // eslint-disable-next-line no-unused-vars
-  const [feedConsumptionData, setFeedConsumptionData] = useState({ quantity_used_kg: '', date: new Date().toISOString().split('T')[0] });
-  const [expenseData, setExpenseData] = useState({ expense_type: '', amount: '', description: '', date: new Date().toISOString().split('T')[0], sacks: '', kg_per_sack: '70' });
+  const [feedConsumptionData, setFeedConsumptionData] = useState({ quantity_used_kg: '', date: getLocalDateString() });
+  const [expenseData, setExpenseData] = useState({ expense_type: '', amount: '', description: '', date: getLocalDateString(), sacks: '', kg_per_sack: '70' });
   // eslint-disable-next-line no-unused-vars
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [profileData, setProfileData] = useState({
     username: '',
@@ -119,7 +128,7 @@ const OwnerDashboard = () => {
   const [totalFeedManuallySet, setTotalFeedManuallySet] = useState(false);
   const [eggTableDialogOpen, setEggTableDialogOpen] = useState(false);
   const [eggTableData, setEggTableData] = useState(null);
-  const [selectedTableDate, setSelectedTableDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedTableDate, setSelectedTableDate] = useState(getLocalDateString());
   
   // Load feed settings when profile settings opens
   useEffect(() => {
@@ -435,7 +444,7 @@ const OwnerDashboard = () => {
 
       if (response.ok) {
         alert('Sale recorded successfully!');
-        setSaleData({ trays_sold: '', price_per_tray: '', date: new Date().toISOString().split('T')[0] });
+        setSaleData({ trays_sold: '', price_per_tray: '', date: getLocalDateString() });
         fetchDashboardData(); // Refresh data
       } else {
         const data = await response.json();
@@ -519,7 +528,7 @@ const OwnerDashboard = () => {
 
       if (response.ok) {
         alert('Expense recorded successfully!');
-        setExpenseData({ expense_type: 'medicine', amount: '', description: '', date: new Date().toISOString().split('T')[0], sacks: '', quantity_kg: '', treatment_type: '' });
+        setExpenseData({ expense_type: 'medicine', amount: '', description: '', date: getLocalDateString(), sacks: '', quantity_kg: '', treatment_type: '' });
         fetchDashboardData(); // Refresh data
       } else {
         const data = await response.json();
@@ -556,7 +565,7 @@ const OwnerDashboard = () => {
 
       if (response.ok) {
         alert('Medical record created successfully!');
-        setExpenseData({ expense_type: 'vaccination', amount: '', description: '', date: new Date().toISOString().split('T')[0] });
+        setExpenseData({ expense_type: 'vaccination', amount: '', description: '', date: getLocalDateString() });
         fetchDashboardData(); // Refresh data
       } else {
         const data = await response.json();
@@ -586,7 +595,7 @@ const OwnerDashboard = () => {
 
       if (response.ok) {
         alert('Feed purchase recorded successfully!');
-        setFeedPurchaseData({ sacks: '', quantity_kg: '', total_cost: '', feed_type: '', date: new Date().toISOString().split('T')[0] });
+        setFeedPurchaseData({ sacks: '', quantity_kg: '', total_cost: '', feed_type: '', date: getLocalDateString() });
         fetchDashboardData(); // Refresh data
       } else {
         const data = await response.json();
@@ -616,7 +625,7 @@ const OwnerDashboard = () => {
 
       if (response.ok) {
         alert('Feed consumption recorded successfully!');
-        setFeedConsumptionData({ quantity_used_kg: '', date: new Date().toISOString().split('T')[0] });
+        setFeedConsumptionData({ quantity_used_kg: '', date: getLocalDateString() });
         fetchDashboardData(); // Refresh data
       } else {
         const data = await response.json();
@@ -715,7 +724,7 @@ const OwnerDashboard = () => {
   const handleViewTodaysEggTable = async () => {
     try {
       const token = localStorage.getItem('token');
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const response = await fetch(`${API_BASE_URL}/api/cages/reports/egg-collection-table/?date=${today}`, {
         headers: {
           'Authorization': 'Token ' + token,
@@ -888,8 +897,17 @@ const OwnerDashboard = () => {
         const today = new Date();
         const thirtyDaysAgo = new Date(today);
         thirtyDaysAgo.setDate(today.getDate() - 30);
-        const startDate = thirtyDaysAgo.toISOString().split('T')[0];
-        const endDate = today.toISOString().split('T')[0];
+        
+        // Format dates manually to respect timezone
+        const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
+        const startDate = formatDate(thirtyDaysAgo);
+        const endDate = formatDate(today);
         const token = localStorage.getItem('token');
 
         // Use fetch to get the PDF and open it in a new window
@@ -1078,7 +1096,7 @@ ${data.daily_summaries.map(day =>
         const token = localStorage.getItem('token');
 
         // Use fetch to get the PDF and open it in a new window
-        fetch(`${API_BASE_URL}/api/cages/reports/download/detailed/?start_date=${selectedDate || '2025-10-01'}&end_date=${selectedDate || new Date().toISOString().split('T')[0]}&token=${token}`, {
+        fetch(`${API_BASE_URL}/api/cages/reports/download/detailed/?start_date=${selectedDate || '2025-10-01'}&end_date=${getLocalDateString()}&token=${token}`, {
           headers: {
             'Authorization': `Token ${token}`,
           },
@@ -1105,9 +1123,17 @@ ${data.daily_summaries.map(day =>
         weekStart.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6); // End of week (Saturday)
-
-        const startDate = weekStart.toISOString().split('T')[0];
-        const endDate = weekEnd.toISOString().split('T')[0];
+        
+        // Format date helper
+        const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
+        const startDate = formatDate(weekStart);
+        const endDate = formatDate(weekEnd);
 
         const response = await fetch(`${url}?start_date=${startDate}&end_date=${endDate}`, {
           headers: {
@@ -1125,9 +1151,17 @@ ${data.daily_summaries.map(day =>
         const today = new Date();
         const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
         const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-        const startDate = monthStart.toISOString().split('T')[0];
-        const endDate = monthEnd.toISOString().split('T')[0];
+        
+        // Format date helper
+        const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
+        const startDate = formatDate(monthStart);
+        const endDate = formatDate(monthEnd);
 
         const response = await fetch(`${url}?start_date=${startDate}&end_date=${endDate}`, {
           headers: {
@@ -1832,7 +1866,7 @@ ${data.daily_summaries.map(day =>
                   fullWidth
                   onClick={() => {
                     setEggTableData(null); // Clear previous data
-                    setSelectedTableDate(new Date().toISOString().split('T')[0]); // Reset to today
+                    setSelectedTableDate(getLocalDateString()); // Reset to today
                     setEggTableDialogOpen(true);
                     handleViewEggTable(); // Load today's data
                   }}
