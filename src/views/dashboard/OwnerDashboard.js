@@ -43,6 +43,11 @@ const OwnerDashboard = () => {
     last_name: ''
   });
   const [chickenCount, setChickenCount] = useState('');
+  // Get user from localStorage for welcome message
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [feedConsumptionKg, setFeedConsumptionKg] = useState('');
   const [saleData, setSaleData] = useState({ trays_sold: '', price_per_tray: '', date: new Date().toISOString().split('T')[0] });
   // eslint-disable-next-line no-unused-vars
@@ -184,7 +189,7 @@ const OwnerDashboard = () => {
   const handleCreateUser = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/auth/register/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -554,7 +559,7 @@ const OwnerDashboard = () => {
   const fetchPendingUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/auth/pending-users/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/pending-users/`, {
         headers: {
           'Authorization': `Token ${token}`,
         },
@@ -660,7 +665,7 @@ const OwnerDashboard = () => {
         updateData.current_password = profileData.currentPassword;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/profile/update/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile/update/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1064,6 +1069,15 @@ ${data.daily_summaries.map(day =>
       }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box>
+            <Typography variant="h5" sx={{
+              fontWeight: 'bold',
+              mb: 1,
+              fontSize: '1.2rem',
+              textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+              color: '#90EE90'
+            }}>
+              Welcome back{currentUser ? `, ${currentUser.username || currentUser.first_name || currentUser.email.split('@')[0]}` : ''}!
+            </Typography>
             <Typography variant="h4" sx={{
               fontWeight: 'bold',
               mb: 1,
