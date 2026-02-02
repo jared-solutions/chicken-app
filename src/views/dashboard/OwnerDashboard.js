@@ -1129,8 +1129,6 @@ ${data.daily_summaries.map(day =>
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: 1,
         p: 2,
         mb: 3,
         bgcolor: 'white',
@@ -1141,33 +1139,7 @@ ${data.daily_summaries.map(day =>
           🏠 JOE FARM
         </Typography>
         
-        {/* Navigation Buttons */}
-        <Box display="flex" alignItems="center" gap={1} sx={{ flexWrap: 'wrap' }}>
-          <Button 
-            variant={tabValue === 0 ? 'contained' : 'outlined'}
-            color="success"
-            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTabValue(0); }}
-            sx={{ borderRadius: '20px' }}
-          >
-            Overview
-          </Button>
-          <Button 
-            variant={tabValue === 1 ? 'contained' : 'outlined'}
-            color="success"
-            onClick={() => setTabValue(1)}
-            sx={{ borderRadius: '20px' }}
-          >
-            Daily Task
-          </Button>
-          <Button 
-            variant={tabValue === 2 ? 'contained' : 'outlined'}
-            color="success"
-            onClick={() => setTabValue(2)}
-            sx={{ borderRadius: '20px' }}
-          >
-            Report
-          </Button>
-          
+        <Box display="flex" alignItems="center" gap={1}>
           {/* Notification Bell */}
           <Tooltip title="Notifications">
             <IconButton onClick={() => setShowNotifications(!showNotifications)}>
@@ -1178,7 +1150,7 @@ ${data.daily_summaries.map(day =>
           </Tooltip>
           
           {/* Menu Button */}
-          <Tooltip title="More Options">
+          <Tooltip title="Menu">
             <IconButton onClick={() => setMobileMenuOpen(true)} sx={{ bgcolor: '#1a5f2a', color: 'white', '&:hover': { bgcolor: '#2d8a3e' } }}>
               <MenuIcon />
             </IconButton>
