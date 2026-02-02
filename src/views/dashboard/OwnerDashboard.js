@@ -23,6 +23,9 @@ import {
 } from '@mui/material';
 // import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+// Backend API URL - Update this when deploying to production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
+
 const OwnerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);

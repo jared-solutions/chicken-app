@@ -9,6 +9,9 @@ import {
   CardContent,
 } from "@mui/material";
 
+// Backend API URL - Update this when deploying to production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
+
 const SignIn = ({ onSignIn, onSignUp }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +26,7 @@ const SignIn = ({ onSignIn, onSignUp }) => {
     }
 
     try {
-      const response = await fetch('/api/auth/login/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -49,7 +52,7 @@ const SignIn = ({ onSignIn, onSignUp }) => {
     }
 
     try {
-      const response = await fetch('/api/auth/password-reset/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/password-reset/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: resetEmail }),

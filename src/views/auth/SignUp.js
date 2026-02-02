@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './SignUp.css';
 
+// Backend API URL - Update this when deploying to production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
+
 const SignUp = ({ onSignUpSuccess }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -23,7 +26,7 @@ const SignUp = ({ onSignUpSuccess }) => {
     }
 
     try {
-      const response = await fetch('/api/auth/register/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
