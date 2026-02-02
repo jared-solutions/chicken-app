@@ -19,8 +19,11 @@ import {
   InputLabel,
   Tabs,
   Tab,
-// IconButton,
+  IconButton,
+  Badge,
+  Tooltip,
 } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 // import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Backend API URL - Update this when deploying to production
@@ -78,6 +81,8 @@ const OwnerDashboard = () => {
   const [settingsTabValue, setSettingsTabValue] = useState(0);
   const [users, setUsers] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [showUsersDialog, setShowUsersDialog] = useState(false);
   const [feedPerChicken, setFeedPerChicken] = useState('');
   const [totalDailyFeed, setTotalDailyFeed] = useState('');
@@ -129,6 +134,13 @@ const OwnerDashboard = () => {
       fetchUsers();
     }
   }, [settingsTabValue, showProfileSettings]);
+
+  // Periodically check for pending users (every 30 seconds)
+  useEffect(() => {
+    fetchPendingUsers();
+    const interval = setInterval(fetchPendingUsers, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchDashboardData = async () => {
     try {
@@ -546,7 +558,7 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/auth/users/${userId}/`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/users/${userId}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Token ${token}`,
@@ -576,6 +588,22 @@ const OwnerDashboard = () => {
       if (response.ok) {
         const data = await response.json();
         setPendingUsers(data);
+        
+        // Create notifications for pending users
+        const newNotifications = data.map(user => ({
+          id: user.id,
+          type: 'pending_user',
+          message: `New user signup: ${user.username || user.email} is waiting for approval`,
+          user: user,
+          timestamp: new Date()
+        }));
+        
+        // Only add new notifications (avoid duplicates)
+        setNotifications(prev => {
+          const existingIds = prev.map(n => n.id);
+          const uniqueNew = newNotifications.filter(n => !existingIds.includes(n.id));
+          return [...uniqueNew, ...prev];
+        });
       } else {
         console.log('Failed to fetch pending users');
       }
@@ -611,7 +639,7 @@ const OwnerDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const today = new Date().toISOString().split('T')[0];
-      const response = await fetch(`/api/cages/reports/egg-collection-table/?date=${today}`, {
+      const response = await fetch(`${API_BASE_URL}/api/cages/reports/egg-collection-table/?date=${today}`, {
         headers: {
           'Authorization': 'Token ' + token,
         },
@@ -633,7 +661,7 @@ const OwnerDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const selectedDate = date || selectedTableDate;
-      const response = await fetch(`/api/cages/reports/egg-collection-table/?date=${selectedDate}`, {
+      const response = await fetch(`${API_BASE_URL}/api/cages/reports/egg-collection-table/?date=${selectedDate}`, {
         headers: {
           'Authorization': 'Token ' + token,
         },
@@ -882,7 +910,7 @@ ${data.daily_summaries.map(day =>
           alert(performanceReport);
         }
       } else if (reportType === 'table') {
-        const response = await fetch(`/api/cages/reports/egg-collection-table/?date=${selectedDate}`, {
+        const response = await fetch(`${API_BASE_URL}/api/cages/reports/egg-collection-table/?date=${selectedDate}`, {
           headers: {
             'Authorization': 'Token ' + token,
           },
@@ -1104,10 +1132,71 @@ ${data.daily_summaries.map(day =>
               🏠 Joe Farm Dashboard
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              Welcome back, Jared! Manage your chicken farm operations efficiently
+              Welcome back! Manage your chicken farm operations efficiently
             </Typography>
           </Box>
-          <Box display="flex" gap={2}>
+          <Box display="flex" alignItems="center" gap={2}>
+            {/* Notification Bell */}
+            <Tooltip title="Notifications">
+              <IconButton
+                onClick={() => setShowNotifications(!showNotifications)}
+                sx={{ color: 'white' }}
+              >
+                <Badge badgeContent={pendingUsers.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+            {showNotifications && (
+              <Box sx={{
+                position: 'absolute',
+                top: '80px',
+                right: '20px',
+                width: '350px',
+                maxHeight: '400px',
+                overflow: 'auto',
+                bgcolor: 'white',
+                borderRadius: 2,
+                boxShadow: 3,
+                zIndex: 1000,
+                p: 2
+              }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#333' }}>
+                  Notifications
+                </Typography>
+                {pendingUsers.length === 0 ? (
+                  <Typography variant="body2" color="text.secondary">
+                    No pending notifications
+                  </Typography>
+                ) : (
+                  pendingUsers.map(user => (
+                    <Box key={user.id} sx={{ 
+                      p: 2, 
+                      mb: 1, 
+                      bgcolor: '#fff3cd', 
+                      borderRadius: 1,
+                      border: '1px solid #ffc107'
+                    }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#856404' }}>
+                        New User Signup
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {user.username || user.email} wants to join
+                      </Typography>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        color="success"
+                        sx={{ mt: 1 }}
+                        onClick={() => handleApproveUser(user.id)}
+                      >
+                        Approve Now
+                      </Button>
+                    </Box>
+                  ))
+                )}
+              </Box>
+            )}
             <Button
               variant="outlined"
               sx={{
@@ -1323,6 +1412,30 @@ ${data.daily_summaries.map(day =>
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       Active birds
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6} lg={3}>
+                <Card sx={{
+                  height: '100%',
+                  border: '1px solid rgba(255, 193, 7, 0.8)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  backdropFilter: 'blur(10px)',
+                  '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }
+                }}>
+                  <CardContent sx={{ textAlign: 'center' }}>
+                    <Typography variant="h2" sx={{ mb: 1 }}>🌾</Typography>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '600' }}>
+                      Feed Required
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#f39c12', mb: 1 }}>
+                      {dashboardData.feed_requirements?.daily_kg || 0} kg
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Daily / {dashboardData.total_chickens || 0} chickens
                     </Typography>
                   </CardContent>
                 </Card>
