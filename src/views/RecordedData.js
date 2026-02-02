@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Grid, Typography, TextField, Button } from '@mui/material';
 
+// Use environment variable for API base URL, fallback to empty string for relative paths
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const RecordedData = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [data, setData] = useState(null);
@@ -12,7 +15,7 @@ const RecordedData = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/cages/reports/egg-collection-table/?date=${selectedDate}`, {
+      const response = await fetch(`${API_BASE_URL}/api/cages/reports/egg-collection-table/?date=${selectedDate}`, {
         headers: {
           'Authorization': `Token ${token}`,
           'Accept': 'application/json'

@@ -120,6 +120,41 @@ const OwnerDashboard = () => {
   const [eggTableDialogOpen, setEggTableDialogOpen] = useState(false);
   const [eggTableData, setEggTableData] = useState(null);
   const [selectedTableDate, setSelectedTableDate] = useState(new Date().toISOString().split('T')[0]);
+  
+  // Load feed settings when profile settings opens
+  useEffect(() => {
+    if (showProfileSettings) {
+      fetchFeedSettings();
+    }
+  }, [showProfileSettings]);
+
+  const fetchFeedSettings = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Fetch feed setting using farm-settings endpoint
+      const feedResponse = await fetch(`${API_BASE_URL}/api/cages/farm-settings/?key=feed_per_chicken_daily_kg`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+      
+      if (feedResponse.ok) {
+        const feedData = await feedResponse.json();
+        console.log('Feed settings fetched:', feedData);
+        if (feedData.value) {
+          setFeedPerChicken(feedData.value);
+          const perChickenRate = parseFloat(feedData.value);
+          const totalFeed = perChickenRate * (dashboardData?.total_chickens || 0);
+          setTotalDailyFeed(totalFeed.toFixed(1));
+        }
+      } else {
+        console.log('Failed to fetch feed settings');
+      }
+    } catch (error) {
+      console.error('Error fetching feed settings:', error);
+    }
+  };
 
   // Load current user data when profile settings opens
   useEffect(() => {
@@ -354,7 +389,8 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/chicken-count/', {
+      console.log('Updating chicken count:', parseInt(chickenCount));
+      const response = await fetch(`${API_BASE_URL}/api/cages/chicken-count/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -363,15 +399,19 @@ const OwnerDashboard = () => {
         body: JSON.stringify({ total_chickens: parseInt(chickenCount) }),
       });
 
+      console.log('Chicken count update response status:', response.status);
+      const data = await response.json();
+      console.log('Chicken count update response:', data);
+
       if (response.ok) {
         alert('Chicken count updated successfully!');
         setChickenCount('');
         fetchDashboardData(); // Refresh data
       } else {
-        const data = await response.json();
         alert(`Failed to update chicken count: ${data.detail || 'Unknown error'}`);
       }
     } catch (error) {
+      console.error('Error updating chicken count:', error);
       alert('Error updating chicken count');
     }
   };
@@ -595,7 +635,8 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/chicken-count/', {
+      console.log('Updating feed settings:', { key: 'feed_per_chicken_daily_kg', value: feedPerChicken });
+      const response = await fetch(`${API_BASE_URL}/api/cages/chicken-count/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -607,14 +648,18 @@ const OwnerDashboard = () => {
         }),
       });
 
+      console.log('Feed settings update response status:', response.status);
+      const data = await response.json();
+      console.log('Feed settings update response:', data);
+
       if (response.ok) {
         alert('Settings updated successfully!');
         fetchDashboardData(); // Refresh data
       } else {
-        const data = await response.json();
         alert(`Failed to update settings: ${data.detail || 'Unknown error'}`);
       }
     } catch (error) {
+      console.error('Error updating settings:', error);
       alert('Error updating settings');
     }
   };
@@ -777,19 +822,19 @@ const OwnerDashboard = () => {
 
       switch (recordType) {
         case 'sales':
-          url = '/api/cages/sales/history/';
+          url = `${API_BASE_URL}/api/cages/sales/history/`;
           title = 'Sales History';
           break;
         case 'feed':
-          url = '/api/cages/feed/history/';
+          url = `${API_BASE_URL}/api/cages/feed/history/`;
           title = 'Feed Records';
           break;
         case 'expenses':
-          url = '/api/cages/expenses/history/';
+          url = `${API_BASE_URL}/api/cages/expenses/history/`;
           title = 'Expense Records';
           break;
         case 'medical':
-          url = '/api/cages/medical/history/';
+          url = `${API_BASE_URL}/api/cages/medical/history/`;
           title = 'Medical Records';
           break;
         default:
@@ -848,7 +893,7 @@ const OwnerDashboard = () => {
         const token = localStorage.getItem('token');
 
         // Use fetch to get the PDF and open it in a new window
-        fetch(`/api/cages/reports/download/${recordType}/?start_date=${startDate}&end_date=${endDate}&token=${token}`, {
+        fetch(`${API_BASE_URL}/api/cages/reports/download/${recordType}/?start_date=${startDate}&end_date=${endDate}&token=${token}`, {
           headers: {
             'Authorization': `Token ${token}`,
           },
@@ -879,7 +924,7 @@ const OwnerDashboard = () => {
   const handleViewReport = async (reportType) => {
     try {
       const token = localStorage.getItem('token');
-      let url = '/api/cages/reports/detailed/';
+      let url = `${API_BASE_URL}/api/cages/reports/detailed/`;
 
       if (reportType === 'feed') {
         // Show feed-related data
@@ -1033,7 +1078,7 @@ ${data.daily_summaries.map(day =>
         const token = localStorage.getItem('token');
 
         // Use fetch to get the PDF and open it in a new window
-        fetch(`/api/cages/reports/download/detailed/?start_date=${selectedDate || '2025-10-01'}&end_date=${selectedDate || new Date().toISOString().split('T')[0]}&token=${token}`, {
+        fetch(`${API_BASE_URL}/api/cages/reports/download/detailed/?start_date=${selectedDate || '2025-10-01'}&end_date=${selectedDate || new Date().toISOString().split('T')[0]}&token=${token}`, {
           headers: {
             'Authorization': `Token ${token}`,
           },
@@ -2826,7 +2871,7 @@ ${data.daily_summaries.map(day =>
           onClick={() => {
             const token = localStorage.getItem('token');
             const date = selectedTableDate;
-            fetch(`/api/cages/reports/download/egg-collection-table/?date=${date}&token=${token}`)
+            fetch(`${API_BASE_URL}/api/cages/reports/download/egg-collection-table/?date=${date}&token=${token}`)
               .then(response => response.blob())
               .then(blob => {
                 const url = window.URL.createObjectURL(blob);
