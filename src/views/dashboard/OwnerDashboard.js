@@ -36,6 +36,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Drawer from '@mui/material/Drawer';
 
 // Backend API URL - Update this when deploying to production
@@ -110,6 +111,7 @@ const OwnerDashboard = () => {
   const [notifications, setNotifications] = useState([]);  // Stores notification messages
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [drawerView, setDrawerView] = useState('menu'); // 'menu' or 'notifications'
   // eslint-disable-next-line no-unused-vars
   const [showUsersDialog, setShowUsersDialog] = useState(false);
   const [feedPerChicken, setFeedPerChicken] = useState('');
@@ -1142,7 +1144,7 @@ ${data.daily_summaries.map(day =>
         <Box display="flex" alignItems="center" gap={1}>
           {/* Notification Bell */}
           <Tooltip title="Notifications">
-            <IconButton onClick={() => setShowNotifications(!showNotifications)}>
+            <IconButton onClick={() => { setDrawerView('notifications'); setMobileMenuOpen(true); }}>
               <Badge badgeContent={pendingUsers.length} color="error">
                 <NotificationsIcon />
               </Badge>
@@ -1151,7 +1153,7 @@ ${data.daily_summaries.map(day =>
           
           {/* Menu Button */}
           <Tooltip title="Menu">
-            <IconButton onClick={() => setMobileMenuOpen(true)} sx={{ bgcolor: '#1a5f2a', color: 'white', '&:hover': { bgcolor: '#2d8a3e' } }}>
+            <IconButton onClick={() => { setDrawerView('menu'); setMobileMenuOpen(true); }} sx={{ bgcolor: '#1a5f2a', color: 'white', '&:hover': { bgcolor: '#2d8a3e' } }}>
               <MenuIcon />
             </IconButton>
           </Tooltip>
@@ -2869,90 +2871,209 @@ ${data.daily_summaries.map(day =>
     </Dialog>
       {/* Mobile Menu Drawer */}
       <Drawer anchor="right" open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
-        <Box sx={{ width: 280, pt: 3, px: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a5f2a', mb: 3, textAlign: 'center' }}>
-            🏠 JOE FARM
-          </Typography>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              p: 2, 
-              mb: 1, 
-              borderRadius: 2, 
-              cursor: 'pointer',
-              '&:hover': { bgcolor: '#f5f5f5' },
-              transition: 'all 0.2s'
-            }}
-            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileMenuOpen(false); }}
-          >
-            <DashboardIcon sx={{ color: '#667eea', mr: 2 }} />
-            <Typography>Overview</Typography>
-          </Box>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              p: 2, 
-              mb: 1, 
-              borderRadius: 2, 
-              cursor: 'pointer',
-              '&:hover': { bgcolor: '#f5f5f5' },
-              transition: 'all 0.2s'
-            }}
-            onClick={() => { setTabValue(1); setMobileMenuOpen(false); }}
-          >
-            <AssignmentIcon sx={{ color: '#ff9800', mr: 2 }} />
-            <Typography>Daily Tasks</Typography>
-          </Box>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              p: 2, 
-              mb: 1, 
-              borderRadius: 2, 
-              cursor: 'pointer',
-              '&:hover': { bgcolor: '#f5f5f5' },
-              transition: 'all 0.2s'
-            }}
-            onClick={() => { setTabValue(2); setMobileMenuOpen(false); }}
-          >
-            <AssessmentIcon sx={{ color: '#4caf50', mr: 2 }} />
-            <Typography>Reports</Typography>
-          </Box>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              p: 2, 
-              mb: 1, 
-              borderRadius: 2, 
-              cursor: 'pointer',
-              '&:hover': { bgcolor: '#f5f5f5' },
-              transition: 'all 0.2s'
-            }}
-            onClick={() => { setShowProfileSettings(true); setMobileMenuOpen(false); }}
-          >
-            <SettingsIcon sx={{ color: '#607d8b', mr: 2 }} />
-            <Typography>Settings</Typography>
-          </Box>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              p: 2, 
-              mb: 1, 
-              borderRadius: 2, 
-              cursor: 'pointer',
-              '&:hover': { bgcolor: '#ffebee' },
-              transition: 'all 0.2s'
-            }}
-            onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/signin'; }}
-          >
-            <LogoutIcon sx={{ color: '#e74c3c', mr: 2 }} />
-            <Typography sx={{ color: '#e74c3c' }}>Logout</Typography>
-          </Box>
+        <Box sx={{ width: 300, pt: 3, px: 2 }}>
+          {drawerView === 'notifications' ? (
+            // Notifications View
+            <>
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 2, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  bgcolor: '#e8f5e9',
+                  '&:hover': { bgcolor: '#c8e6c9' },
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => { setDrawerView('menu'); }}
+              >
+                <ArrowBackIcon sx={{ color: '#1a5f2a', mr: 2 }} />
+                <Typography sx={{ fontWeight: 'bold', color: '#1a5f2a' }}>Back to Menu</Typography>
+              </Box>
+              
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a5f2a', mb: 3, textAlign: 'center' }}>
+                Notifications {pendingUsers.length > 0 && `(${pendingUsers.length} unread)`}
+              </Typography>
+              
+              {pendingUsers.length > 0 ? (
+                <>
+                  <Typography variant="body2" sx={{ mb: 2, color: '#666' }}>
+                    You have {pendingUsers.length} unread notification{pendingUsers.length !== 1 ? 's' : ''}:
+                  </Typography>
+                  {pendingUsers.map(user => (
+                    <Box key={user.id} sx={{ 
+                      p: 2, 
+                      mb: 2, 
+                      bgcolor: '#fff3cd', 
+                      borderRadius: 2,
+                      border: '1px solid #ffc107'
+                    }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#856404', mb: 1 }}>
+                        New User Signup: {user.username || user.email}
+                      </Typography>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleApproveUser(user.id)}
+                      >
+                        Approve User
+                      </Button>
+                    </Box>
+                  ))}
+                </>
+              ) : (
+                <Box sx={{ p: 4, textAlign: 'center', bgcolor: '#f5f5f5', borderRadius: 2 }}>
+                  <Typography variant="h6" sx={{ color: '#9e9e9e', mb: 1 }}>
+                    All caught up!
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#999' }}>
+                    No new notifications at this time.
+                  </Typography>
+                </Box>
+              )}
+              
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#1a5f2a', mt: 3, mb: 2 }}>
+                System Reminders
+              </Typography>
+              
+              <Box sx={{ p: 2, mb: 2, bgcolor: '#e3f2fd', borderRadius: 2, border: '1px solid #2196f3' }}>
+                <Typography variant="body2" sx={{ color: '#1565c0' }}>
+                  Check feed inventory levels daily
+                </Typography>
+              </Box>
+              
+              <Box sx={{ p: 2, mb: 2, bgcolor: '#fce4ec', borderRadius: 2, border: '1px solid #e91e63' }}>
+                <Typography variant="body2" sx={{ color: '#c2185b' }}>
+                  Monitor chicken health regularly
+                </Typography>
+              </Box>
+            </>
+          ) : (
+            // Menu View
+            <>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a5f2a', mb: 3, textAlign: 'center' }}>
+                JOE FARM
+              </Typography>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 2, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  bgcolor: '#e8f5e9',
+                  '&:hover': { bgcolor: '#c8e6c9' }
+                }}
+                onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              >
+                <ArrowBackIcon sx={{ color: '#1a5f2a', mr: 2 }} />
+                <Typography sx={{ fontWeight: 'bold', color: '#1a5f2a' }}>Back to Dashboard</Typography>
+              </Box>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f5f5f5' }
+                }}
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileMenuOpen(false); }}
+              >
+                <DashboardIcon sx={{ color: '#667eea', mr: 2 }} />
+                <Typography>Overview</Typography>
+              </Box>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f5f5f5' }
+                }}
+                onClick={() => { setTabValue(1); setMobileMenuOpen(false); }}
+              >
+                <AssignmentIcon sx={{ color: '#ff9800', mr: 2 }} />
+                <Typography>Daily Tasks</Typography>
+              </Box>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f5f5f5' }
+                }}
+                onClick={() => { setTabValue(2); setMobileMenuOpen(false); }}
+              >
+                <AssessmentIcon sx={{ color: '#4caf50', mr: 2 }} />
+                <Typography>Reports</Typography>
+              </Box>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f5f5f5' }
+                }}
+                onClick={() => { setDrawerView('notifications'); }}
+              >
+                <Badge badgeContent={pendingUsers.length} color="error">
+                  <NotificationsIcon sx={{ color: '#ff9800', mr: 2 }} />
+                </Badge>
+                <Typography>Notifications</Typography>
+              </Box>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f5f5f5' }
+                }}
+                onClick={() => { setShowProfileSettings(true); setMobileMenuOpen(false); }}
+              >
+                <SettingsIcon sx={{ color: '#607d8b', mr: 2 }} />
+                <Typography>Settings</Typography>
+              </Box>
+              
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2, 
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#ffebee' }
+                }}
+                onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/signin'; }}
+              >
+                <LogoutIcon sx={{ color: '#e74c3c', mr: 2 }} />
+                <Typography sx={{ color: '#e74c3c' }}>Logout</Typography>
+              </Box>
+            </>
+          )}
         </Box>
       </Drawer>
     </Box>
