@@ -128,7 +128,7 @@ const OwnerDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/dashboard/overview/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/dashboard/overview/`, {
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json',
@@ -184,7 +184,7 @@ const OwnerDashboard = () => {
   const handleCreateUser = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/auth/register/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -270,7 +270,7 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/sales/record/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/sales/record/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -314,7 +314,7 @@ const OwnerDashboard = () => {
 
       try {
         const token = localStorage.getItem('token');
-        await fetch('/api/cages/feed/purchase/', {
+        await fetch(`${API_BASE_URL}/api/cages/feed/purchase/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -339,7 +339,7 @@ const OwnerDashboard = () => {
 
       try {
         const token = localStorage.getItem('token');
-        await fetch('/api/cages/medical/record/', {
+        await fetch(`${API_BASE_URL}/api/cages/medical/record/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -354,7 +354,7 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/expenses/record/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/expenses/record/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -391,7 +391,7 @@ const OwnerDashboard = () => {
         date: expenseData.date,
       };
 
-      const response = await fetch('/api/cages/medical/record/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/medical/record/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -421,7 +421,7 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/feed/purchase/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/feed/purchase/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -451,7 +451,7 @@ const OwnerDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/cages/feed/consumption/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/feed/consumption/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -554,7 +554,7 @@ const OwnerDashboard = () => {
   const fetchPendingUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/auth/pending-users/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/pending-users/', {
         headers: {
           'Authorization': `Token ${token}`,
         },
@@ -574,7 +574,7 @@ const OwnerDashboard = () => {
   const handleApproveUser = async (userId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/auth/users/${userId}/approve/`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/users/${userId}/approve/`, {
         method: 'POST',
         headers: {
           'Authorization': `Token ${token}`,
@@ -660,7 +660,7 @@ const OwnerDashboard = () => {
         updateData.current_password = profileData.currentPassword;
       }
 
-      const response = await fetch('/api/auth/profile/update/', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile/update/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
