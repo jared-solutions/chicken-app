@@ -275,6 +275,89 @@ const OwnerDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // ============ NOTIFICATION FUNCTIONS ============
+  
+  // Check if egg collection reminder is needed (7 PM check)
+  const checkEggCollectionReminder = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/cages/notifications/egg-reminder/`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.needs_reminder) {
+          // Add reminder notification
+          setNotifications(prev => [{
+            id: Date.now(),
+            message: data.message,
+            timestamp: new Date(),
+            read: false,
+            type: 'warning'
+          }, ...prev]);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking egg collection reminder:', error);
+    }
+  };
+  
+  // Fetch weekly profit/loss report
+  const fetchWeeklyReport = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/cages/notifications/weekly-report/`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        // Add weekly report notification
+        setNotifications(prev => [{
+          id: Date.now(),
+          message: data.message,
+          timestamp: new Date(),
+          read: false,
+          type: data.profit_loss > 0 ? 'success' : data.profit_loss < 0 ? 'error' : 'info',
+          data: data  // Store full report data
+        }, ...prev]);
+      }
+    } catch (error) {
+      console.error('Error fetching weekly report:', error);
+    }
+  };
+  
+  // Check time and trigger notifications
+  // 7 PM reminder for egg collection
+  // Sunday 8 PM for weekly report
+  useEffect(() => {
+    const checkTimeAndNotify = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const day = now.getDay(); // 0 = Sunday
+      
+      // Check for 7 PM reminder (19:00)
+      if (hours === 19 && minutes === 0) {
+        checkEggCollectionReminder();
+      }
+      
+      // Check for weekly report on Sunday at 8 PM (20:00)
+      if (day === 0 && hours === 20 && minutes === 0) {
+        fetchWeeklyReport();
+      }
+    };
+    
+    // Run check every minute
+    const interval = setInterval(checkTimeAndNotify, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -1931,6 +2014,54 @@ ${data.daily_summaries.map(day =>
                 >
                   View Report
                 </Button>
+              </Card>
+            </Grid>
+            {/* Manual Notification Triggers - For testing */}
+            <Grid item xs={12} md={6} lg={4}>
+              <Card sx={{
+                p: 3,
+                border: '1px solid rgba(156, 39, 176, 0.8)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                backdropFilter: 'blur(15px)',
+                borderRadius: '16px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                cursor: 'pointer',
+                '&:hover': {
+                  boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
+                  transform: 'translateY(-4px) scale(1.02)',
+                  backgroundColor: 'rgba(255,255,255,0.98)'
+                }
+              }}>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: '600', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  🔔 Notifications
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+                  Test notification triggers (7 PM daily reminder, Sunday weekly report)
+                </Typography>
+                <Box display="flex" gap={1} mb={2}>
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    size="small"
+                    onClick={checkEggCollectionReminder}
+                    sx={{ flex: 1, borderRadius: '8px' }}
+                  >
+                    Test 7 PM
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    onClick={fetchWeeklyReport}
+                    sx={{ flex: 1, borderRadius: '8px' }}
+                  >
+                    Weekly Report
+                  </Button>
+                </Box>
+                <Typography variant="caption" color="textSecondary">
+                  7 PM reminder triggers if egg collection not recorded. Weekly report triggers every Sunday at 8 PM.
+                </Typography>
               </Card>
             </Grid>
           </Grid>
