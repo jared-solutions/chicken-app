@@ -136,12 +136,71 @@ const OwnerDashboard = () => {
     }
   }, [dashboardData, feedPerChicken, totalFeedManuallySet]);
 
+  // Define fetchPendingUsers before useEffect that uses it
+  const fetchPendingUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/auth/pending-users/`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPendingUsers(data);
+        
+        // Create notifications for pending users
+        const newNotifications = data.map(user => ({
+          id: user.id,
+          type: 'pending_user',
+          message: `New user signup: ${user.username || user.email} is waiting for approval`,
+          user: user,
+          timestamp: new Date()
+        }));
+        
+        // Only add new notifications (avoid duplicates)
+        setNotifications(prev => {
+          const existingIds = prev.map(n => n.id);
+          const uniqueNew = newNotifications.filter(n => !existingIds.includes(n.id));
+          return [...uniqueNew, ...prev];
+        });
+      } else {
+        console.log('Failed to fetch pending users');
+      }
+    } catch (error) {
+      console.log('Error fetching pending users');
+    }
+  };
+
+  // Define fetchUsers before useEffect that uses it
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/auth/users/`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+        fetchPendingUsers(); // Also fetch pending users
+      } else {
+        console.log('Failed to fetch users');
+      }
+    } catch (error) {
+      console.log('Error fetching users');
+    }
+  };
+
   // Fetch users when user management tab opens
   useEffect(() => {
     if (settingsTabValue === 3 && showProfileSettings) {
       fetchUsers();
     }
-  }, [settingsTabValue, showProfileSettings, fetchUsers]);
+  }, [settingsTabValue, showProfileSettings]);
 
   // Periodically check for pending users (every 30 seconds)
   useEffect(() => {
@@ -538,27 +597,6 @@ const OwnerDashboard = () => {
     }
   };
 
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/auth/users/`, {
-        headers: {
-          'Authorization': `Token ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
-        fetchPendingUsers(); // Also fetch pending users
-      } else {
-        console.log('Failed to fetch users');
-      }
-    } catch (error) {
-      console.log('Error fetching users');
-    }
-  };
-
   const handleDeleteUser = async (userId) => {
     if (!window.confirm('Are you sure you want to remove this user? This action cannot be undone.')) {
       return;
@@ -581,42 +619,6 @@ const OwnerDashboard = () => {
       }
     } catch (error) {
       alert('Error removing user');
-    }
-  };
-
-  const fetchPendingUsers = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/auth/pending-users/`, {
-        headers: {
-          'Authorization': `Token ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setPendingUsers(data);
-        
-        // Create notifications for pending users
-        const newNotifications = data.map(user => ({
-          id: user.id,
-          type: 'pending_user',
-          message: `New user signup: ${user.username || user.email} is waiting for approval`,
-          user: user,
-          timestamp: new Date()
-        }));
-        
-        // Only add new notifications (avoid duplicates)
-        setNotifications(prev => {
-          const existingIds = prev.map(n => n.id);
-          const uniqueNew = newNotifications.filter(n => !existingIds.includes(n.id));
-          return [...uniqueNew, ...prev];
-        });
-      } else {
-        console.log('Failed to fetch pending users');
-      }
-    } catch (error) {
-      console.log('Error fetching pending users');
     }
   };
 
