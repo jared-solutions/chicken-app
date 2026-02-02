@@ -133,6 +133,11 @@ const OwnerDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please log in to view dashboard');
+        setLoading(false);
+        return;
+      }
       const response = await fetch(`${API_BASE_URL}/api/cages/dashboard/overview/`, {
         headers: {
           'Authorization': `Token ${token}`,
@@ -142,10 +147,13 @@ const OwnerDashboard = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Dashboard data received:', data); // Debug log
-        console.log('eggs_today value:', data.eggs_today);
-        console.log('trays_in_store value:', data.trays_in_store);
+        console.log('Dashboard data received:', data);
         setDashboardData(data);
+      } else if (response.status === 401) {
+        // Token expired or invalid
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setError('Session expired. Please log in again.');
       } else {
         console.error('Dashboard API error:', response.status, response.statusText);
         setError('Failed to load dashboard data');
