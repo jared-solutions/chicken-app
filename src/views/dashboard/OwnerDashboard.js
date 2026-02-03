@@ -24,6 +24,8 @@ import {
   Tooltip,
   useMediaQuery,
   useTheme,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import HomeIcon from '@mui/icons-material/Home';
@@ -38,6 +40,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Drawer from '@mui/material/Drawer';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
@@ -69,6 +73,20 @@ const OwnerDashboard = () => {
   });
   const [chickenCount, setChickenCount] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
+  
+  // Load dark mode preference on mount
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode !== null) {
+      setDarkMode(savedDarkMode === 'true');
+    }
+  }, []);
+  
+  // Save dark mode preference when it changes
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode.toString());
+  }, [darkMode]);
   
   // Load current user data
   useEffect(() => {
@@ -3265,6 +3283,34 @@ ${data.daily_summaries.map(day =>
               >
                 <SettingsIcon sx={{ color: '#607d8b', mr: 2 }} />
                 <Typography>Settings</Typography>
+              </Box>
+              
+              {/* Dark Mode Toggle */}
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  p: 2, 
+                  mb: 1, 
+                  borderRadius: 2,
+                  bgcolor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                  '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {darkMode ? 
+                    <Brightness7Icon sx={{ color: '#ffd700', mr: 2 }} /> : 
+                    <Brightness4Icon sx={{ color: '#607d8b', mr: 2 }} />
+                  }
+                  <Typography>{darkMode ? 'Light Mode' : 'Dark Mode'}</Typography>
+                </Box>
+                <Switch 
+                  checked={darkMode} 
+                  onChange={() => setDarkMode(!darkMode)}
+                  color="default"
+                  size="small"
+                />
               </Box>
               
               <Box 
