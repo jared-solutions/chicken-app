@@ -99,13 +99,13 @@ const SignIn = ({ onSignIn, onSignUp }) => {
   return (
     <Container maxWidth="sm">
       <Card 
-        elevation={6} 
+        elevation={0}
         sx={{ 
           mt: 8, 
           p: 2,
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 255, 240, 0.95))',
+          background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(34, 139, 34, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
           borderRadius: 3
         }}
       >
@@ -122,14 +122,14 @@ const SignIn = ({ onSignIn, onSignUp }) => {
               variant="h4" 
               gutterBottom 
               sx={{ 
-                color: '#1b5e20', 
+                color: '#fff', 
                 fontWeight: 'bold',
-                textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
               }}
             >
               Welcome to Joe Farm
             </Typography>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body2" sx={{ color: '#fff', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               Sign in to access your dashboard
             </Typography>
           </Box>
