@@ -2898,6 +2898,31 @@ ${data.daily_summaries.map(day =>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setShowProfileSettings(false)}>Cancel</Button>
+        <Button 
+          onClick={() => {
+            const date = getLocalDateString();
+            if (window.confirm(`Delete all egg data for ${date}? This cannot be undone.`)) {
+              const token = localStorage.getItem('token');
+              fetch(`${API_BASE_URL}/api/cages/data/delete-by-date/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Token ${token}`
+                },
+                body: JSON.stringify({ date })
+              })
+              .then(res => res.json())
+              .then(data => {
+                alert(data.message || 'Data deleted successfully!');
+                fetchDashboardData();
+              })
+              .catch(err => alert('Error: ' + err.message));
+            }
+          }}
+          color="error"
+        >
+          Delete Today's Data
+        </Button>
         <Button onClick={() => {
           if (settingsTabValue === 0) {
             handleUpdateProfile();
