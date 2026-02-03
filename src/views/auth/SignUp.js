@@ -72,10 +72,17 @@ const SignUp = ({ onSignUpSuccess, onBack }) => {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        alert('Sign Up Successful! You are now logged in.');
-        onSignUpSuccess(data.user);
+        // Only auto-login if user is approved (first owner user)
+        if (data.user && data.user.is_approved) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          alert('Sign Up Successful! You are now logged in.');
+          onSignUpSuccess(data.user);
+        } else {
+          // Workers and non-first owners need approval - don't log them in
+          alert('Registration successful! Your account is pending approval by the owner.\n\nYou will be able to log in once approved.');
+          onBack(); // Go back to login page
+        }
       } else {
         const data = await response.json();
         // Handle specific error messages from Django REST framework
