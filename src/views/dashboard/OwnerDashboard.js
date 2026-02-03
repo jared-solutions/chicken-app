@@ -165,7 +165,10 @@ const OwnerDashboard = () => {
   const [eggTableData, setEggTableData] = useState(null);
   const [selectedTableDate, setSelectedTableDate] = useState(getLocalDateString());
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
-  
+  const [deleteDate, setDeleteDate] = useState(getLocalDateString());
+  const [deleteMessage, setDeleteMessage] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   // Load feed settings when profile settings opens
   useEffect(() => {
     if (showProfileSettings) {
