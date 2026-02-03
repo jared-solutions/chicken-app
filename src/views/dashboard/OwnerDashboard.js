@@ -857,6 +857,18 @@ const OwnerDashboard = () => {
     }
   };
 
+  const handleMarkNotificationRead = async (notificationId) => {
+    const success = await markNotificationRead(notificationId);
+    if (success) {
+      // Refresh notifications
+      const data = await fetchNotifications();
+      if (data) {
+        setNotifications(data.notifications || []);
+        setUnreadNotificationCount(data.unread_count || 0);
+      }
+    }
+  };
+
   const handleViewTodaysEggTable = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -1360,7 +1372,7 @@ ${data.daily_summaries.map(day =>
           {/* Notification Bell */}
           <Tooltip title="Notifications">
             <IconButton onClick={() => { setDrawerView('notifications'); setMobileMenuOpen(true); }}>
-              <Badge badgeContent={pendingUsers.length} color="error">
+              <Badge badgeContent={unreadNotificationCount} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -3182,33 +3194,34 @@ ${data.daily_summaries.map(day =>
               </Box>
               
               <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a5f2a', mb: 3, textAlign: 'center' }}>
-                Notifications {pendingUsers.length > 0 && `(${pendingUsers.length} unread)`}
+                Notifications {notifications.length > 0 && `(${unreadNotificationCount} unread)`}
               </Typography>
               
-              {pendingUsers.length > 0 ? (
+              {notifications.length > 0 ? (
                 <>
                   <Typography variant="body2" sx={{ mb: 2, color: '#666' }}>
-                    You have {pendingUsers.length} unread notification{pendingUsers.length !== 1 ? 's' : ''}:
+                    You have {notifications.length} notification{notifications.length !== 1 ? 's' : ''}:
                   </Typography>
-                  {pendingUsers.map(user => (
-                    <Box key={user.id} sx={{ 
+                  {notifications.map(notification => (
+                    <Box key={notification.id} sx={{ 
                       p: 2, 
                       mb: 2, 
-                      bgcolor: '#fff3cd', 
+                      bgcolor: notification.is_read ? '#f5f5f5' : '#e8f5e8', 
                       borderRadius: 2,
-                      border: '1px solid #ffc107'
-                    }}>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#856404', mb: 1 }}>
-                        New User Signup: {user.username || user.email}
+                      border: '1px solid #ddd',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => handleMarkNotificationRead(notification.id)}
+                    >
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#1a5f2a', mb: 1 }}>
+                        {notification.title}
                       </Typography>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleApproveUser(user.id)}
-                      >
-                        Approve User
-                      </Button>
+                      <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
+                        {notification.message}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#999' }}>
+                        {new Date(notification.created_at).toLocaleString()}
+                      </Typography>
                     </Box>
                   ))}
                 </>
