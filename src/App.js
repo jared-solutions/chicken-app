@@ -130,7 +130,7 @@ const App = () => {
         const cage = cages.find(c => c.id === parseInt(cageId));
         if (!cage) return null;
 
-        // Organize eggs by partition and box
+        // Organize eggs by partition and box - use object to avoid duplicates
         const partitionCounts = {};
         Object.entries(eggData).forEach(([key, value]) => {
           const parts = key.split('-');
@@ -151,23 +151,23 @@ const App = () => {
 
           if (count > 0) {
             if (!partitionCounts[partitionIndex]) {
-              partitionCounts[partitionIndex] = [];
+              partitionCounts[partitionIndex] = {};
             }
-            // Record each box with its egg count
-            partitionCounts[partitionIndex].push({
+            // Store by boxNumber to avoid duplicates
+            partitionCounts[partitionIndex][boxNumber] = {
               value: count,
               boxNumber: boxNumber,
               partitionIndex: partitionIndex
-            });
+            };
           }
         });
 
         return {
           cageId: parseInt(cageId),
           cageType: cage.type,
-          partitions: Object.entries(partitionCounts).map(([partitionIndex, eggs]) => ({
+          partitions: Object.entries(partitionCounts).map(([partitionIndex, boxes]) => ({
             partitionIndex: parseInt(partitionIndex) + 1,
-            eggsCollected: eggs,
+            eggsCollected: Object.values(boxes),
             comments: '',
           })),
         };
