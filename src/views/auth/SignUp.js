@@ -99,12 +99,22 @@ const SignUp = ({ onSignUpSuccess }) => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container 
+      maxWidth="sm"
+      sx={{ 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        px: 2
+      }}
+    >
       <Card 
         elevation={0}
         sx={{ 
-          mt: 8, 
-          p: 2,
+          width: '100%',
+          maxWidth: 450,
+          p: 3,
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
