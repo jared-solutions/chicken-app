@@ -16,6 +16,7 @@ const App = () => {
   const [cages, setCages] = useState([]);
   const [shadeEggs, setShadeEggs] = useState('');
   const [cageEggData, setCageEggData] = useState({});
+  const [showRecordedData, setShowRecordedData] = useState(false);
 
   // Check for existing session on app load
   useEffect(() => {
@@ -96,7 +97,11 @@ const App = () => {
   };
 
   const viewRecordedData = () => {
-    alert('Feature coming soon - view recorded egg collection data');
+    setShowRecordedData(true);
+  };
+
+  const goBackToCollection = () => {
+    setShowRecordedData(false);
   };
 
   const handleSubmitAllData = async () => {
@@ -433,27 +438,54 @@ const App = () => {
         <h1 className="companyname">Joe Farm</h1>
         <button onClick={handleLogout} className="btn-logout">Logout</button>
       </div>
-      <div className="date-section">
-        <label>Date: </label>
-        <input
-          type="date"
-          value={date}
-          onChange={handleDateChange}
-          className="input-date"
-        />
-      </div>
-      <div className="input-section">
-        {!isCagesAdded && (
-          <>
-            <button onClick={addCages} className="btn-add-cages">Start Egg Collection</button>
-          </>
-        )}
-        {error && <p className="error-message">{error}</p>}
-        <div className="view-data-section">
-          <button onClick={viewRecordedData} className="btn-view-data">View Recorded Data</button>
+      
+      {showRecordedData ? (
+        <div className="recorded-data-view">
+          <button 
+            onClick={goBackToCollection} 
+            className="btn-back"
+            style={{
+              background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '10px 24px',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            ← Back to Egg Collection
+          </button>
+          <RecordedData />
         </div>
-      </div>
-      {isCagesAdded && cages.map((cage) => <Cage key={cage.id} cage={cage} onEggDataChange={setCageEggData} />)}
+      ) : (
+        <>
+          <div className="date-section">
+            <label>Date: </label>
+            <input
+              type="date"
+              value={date}
+              onChange={handleDateChange}
+              className="input-date"
+            />
+          </div>
+          <div className="input-section">
+            {!isCagesAdded && (
+              <>
+                <button onClick={addCages} className="btn-add-cages">Start Egg Collection</button>
+              </>
+            )}
+            {error && <p className="error-message">{error}</p>}
+            <div className="view-data-section">
+              <button onClick={viewRecordedData} className="btn-view-data">View Recorded Data</button>
+            </div>
+          </div>
+          {isCagesAdded && cages.map((cage) => <Cage key={cage.id} cage={cage} onEggDataChange={setCageEggData} />)}
 
       {/* Shade eggs section */}
       {isCagesAdded && (
@@ -553,6 +585,8 @@ const App = () => {
             </button>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
