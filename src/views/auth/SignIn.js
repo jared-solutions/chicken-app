@@ -7,7 +7,18 @@ import {
   Box,
   Card,
   CardContent,
+  InputAdornment,
+  IconButton,
+  Alert,
+  Grid
 } from "@mui/material";
+import {
+  Visibility,
+  VisibilityOff,
+  Email,
+  Lock,
+  AgriculturalBusiness
+} from '@mui/icons-material';
 
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
@@ -18,6 +29,9 @@ const SignIn = ({ onSignIn, onSignUp }) => {
   const [error, setError] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [resetError, setResetError] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -38,18 +52,26 @@ const SignIn = ({ onSignIn, onSignUp }) => {
         localStorage.setItem('user', JSON.stringify(data.user));
         onSignIn(data.user);
       } else {
-        setError("Invalid credentials");
+        const data = await response.json();
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setError("Invalid credentials");
+        }
       }
     } catch (error) {
-      setError("Login failed");
+      setError("Login failed. Please check your internet connection.");
     }
   };
 
   const handleForgotPassword = async () => {
     if (!resetEmail) {
-      setError("Please enter your email address");
+      setResetError("Please enter your email address");
       return;
     }
+
+    setResetError("");
+    setResetSuccess(false);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/password-reset/`, {
@@ -59,80 +81,242 @@ const SignIn = ({ onSignIn, onSignUp }) => {
       });
 
       if (response.ok) {
-        alert("Password reset instructions have been sent to your email");
-        setShowForgotPassword(false);
-        setResetEmail("");
+        setResetSuccess(true);
       } else {
-        setError("Failed to send password reset email");
+        setResetError("Failed to send password reset email");
       }
     } catch (error) {
-      setError("Password reset failed");
+      setResetError("Password reset failed. Please try again.");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSignIn();
     }
   };
 
   return (
-    <Container maxWidth="xs">
-      <Card elevation={3} sx={{ mt: 5, p: 3, textAlign: "center", background: 'linear-gradient(135deg, rgba(240, 255, 240, 0.9), rgba(245, 245, 220, 0.9))', backdropFilter: 'blur(10px)', border: '1px solid rgba(34, 139, 34, 0.2)' }}>
+    <Container maxWidth="sm">
+      <Card 
+        elevation={6} 
+        sx={{ 
+          mt: 8, 
+          p: 2,
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 255, 240, 0.95))',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(34, 139, 34, 0.2)',
+          borderRadius: 3
+        }}
+      >
         <CardContent>
-          <Typography variant="h4" gutterBottom sx={{ color: '#006400', fontWeight: 'bold', textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
-            Welcome to Joe Farm
-          </Typography>
+          <Box textAlign="center" mb={3}>
+            <AgriculturalBusiness 
+              sx={{ 
+                fontSize: 50, 
+                color: '#2e7d32',
+                mb: 1
+              }} 
+            />
+            <Typography 
+              variant="h4" 
+              gutterBottom 
+              sx={{ 
+                color: '#1b5e20', 
+                fontWeight: 'bold',
+                textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+              }}
+            >
+              Welcome to Joe Farm
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Sign in to access your dashboard
+            </Typography>
+          </Box>
 
-          <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
             <TextField
-              label="Email"
+              label="Email Address"
+              type="email"
               variant="outlined"
               fullWidth
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              sx={{ '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#228B22' }, '&:hover fieldset': { borderColor: '#32CD32' }, '&.Mui-focused fieldset': { borderColor: '#228B22' } } }}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Email color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <TextField
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               variant="outlined"
               fullWidth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              sx={{ '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#228B22' }, '&:hover fieldset': { borderColor: '#32CD32' }, '&.Mui-focused fieldset': { borderColor: '#228B22' } } }}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Lock color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
-            <Button variant="contained" fullWidth onClick={handleSignIn} sx={{ backgroundColor: '#228B22', '&:hover': { backgroundColor: '#32CD32' }, color: 'white', fontWeight: 'bold' }}>
-              Log in
+            <Button 
+              variant="contained" 
+              fullWidth 
+              onClick={handleSignIn} 
+              sx={{ 
+                py: 1.5,
+                background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                textTransform: 'none',
+                borderRadius: 2,
+                boxShadow: '0 4px 12px rgba(46, 125, 50, 0.3)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #1b5e20 0%, #0d3d0d 100%)',
+                  boxShadow: '0 6px 16px rgba(46, 125, 50, 0.4)',
+                },
+              }}
+            >
+              Sign In
             </Button>
-            {error && <Typography color="error">{error}</Typography>}
 
-            <Button variant="text" sx={{ mt: 1, color: '#228B22', '&:hover': { color: '#32CD32' } }} onClick={() => setShowForgotPassword(true)}>
+            <Button 
+              variant="text" 
+              sx={{ 
+                mt: 1, 
+                color: '#2e7d32', 
+                '&:hover': { color: '#1b5e20' } 
+              }} 
+              onClick={() => setShowForgotPassword(true)}
+            >
               Forgot Password?
             </Button>
           </Box>
 
           {showForgotPassword && (
-            <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
-              <Typography variant="h6" gutterBottom>
+            <Box sx={{ mt: 3, p: 3, border: '1px solid #e0e0e0', borderRadius: 2, bgcolor: 'rgba(255,255,255,0.5)' }}>
+              <Typography variant="h6" gutterBottom sx={{ color: '#1b5e20', fontWeight: 'bold' }}>
                 Reset Password
               </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                Enter your email address and we'll send you a code to reset your password.
+              </Typography>
+              
+              {resetError && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {resetError}
+                </Alert>
+              )}
+              
+              {resetSuccess && (
+                <Alert severity="success" sx={{ mb: 2 }}>
+                  Password reset instructions have been sent to your email.
+                </Alert>
+              )}
+              
               <TextField
-                label="Email"
+                label="Email Address"
+                type="email"
                 variant="outlined"
                 fullWidth
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 sx={{ mb: 2 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email color="action" />
+                    </InputAdornment>
+                  ),
+                }}
               />
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button variant="contained" color="primary" onClick={handleForgotPassword}>
-                  Send Reset Email
-                </Button>
-                <Button variant="outlined" onClick={() => setShowForgotPassword(false)}>
-                  Cancel
-                </Button>
-              </Box>
+              
+              <Grid container spacing={1}>
+                <Grid item xs={6}>
+                  <Button 
+                    variant="contained" 
+                    fullWidth 
+                    onClick={handleForgotPassword}
+                    sx={{ 
+                      background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
+                      textTransform: 'none',
+                    }}
+                  >
+                    Send Code
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button 
+                    variant="outlined" 
+                    fullWidth 
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setResetEmail("");
+                      setResetError("");
+                      setResetSuccess(false);
+                    }}
+                    sx={{ 
+                      color: '#2e7d32',
+                      borderColor: '#2e7d32',
+                      textTransform: 'none',
+                      '&:hover': {
+                        borderColor: '#1b5e20',
+                        color: '#1b5e20',
+                      },
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
+              </Grid>
             </Box>
           )}
 
-          <Button variant="outlined" fullWidth sx={{ mt: 2, color: '#228B22', borderColor: '#228B22', '&:hover': { borderColor: '#32CD32', color: '#32CD32' } }} onClick={onSignUp}>
+          <Button 
+            variant="outlined" 
+            fullWidth 
+            sx={{ 
+              mt: 3, 
+              color: '#2e7d32', 
+              borderColor: '#2e7d32',
+              py: 1.5,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2,
+              '&:hover': { 
+                borderColor: '#1b5e20',
+                color: '#1b5e20',
+                bgcolor: 'rgba(46, 125, 50, 0.08)'
+              },
+            }} 
+            onClick={onSignUp}
+          >
             Create New Account
           </Button>
         </CardContent>

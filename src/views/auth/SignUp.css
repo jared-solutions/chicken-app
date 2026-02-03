@@ -1,67 +1,7 @@
-.signup-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-}
-
-.signup-container h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  text-align: center;
-}
-
-.signup-container form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 400px;
-  gap: 15px;
-}
-
-.signup-container input {
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #333;
-}
-
-.signup-container input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.signup-container button {
-  padding: 12px;
-  font-size: 16px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.signup-container button:hover {
-  background-color: #218838;
-}
-
-.error-message {
-  color: #ff6b6b;
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-}
+/* SignUp page styles - mostly handled by Material-UI now */
 
 /* Mobile responsiveness */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .signup-container {
     padding: 10px;
   }
@@ -78,4 +18,9 @@
   .signup-container button {
     font-size: 16px; /* Prevent zoom on iOS */
   }
+}
+
+/* Smooth transitions for any legacy elements */
+.signup-container * {
+  transition: all 0.3s ease;
 }
