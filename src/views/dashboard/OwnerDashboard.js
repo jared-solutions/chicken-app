@@ -26,8 +26,15 @@ import {
   useTheme,
   Switch,
   FormControlLabel,
+  Popover,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import PeopleIcon from '@mui/icons-material/People';
@@ -42,6 +49,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Drawer from '@mui/material/Drawer';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import { fetchNotifications, markNotificationRead, markAllNotificationsRead } from './notification-helper';
 
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
@@ -143,6 +152,7 @@ const OwnerDashboard = () => {
   const [users, setUsers] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);  // Stores notification messages
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);  // Count of unread notifications
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [drawerView, setDrawerView] = useState('menu'); // 'menu' or 'notifications'
@@ -154,6 +164,7 @@ const OwnerDashboard = () => {
   const [eggTableDialogOpen, setEggTableDialogOpen] = useState(false);
   const [eggTableData, setEggTableData] = useState(null);
   const [selectedTableDate, setSelectedTableDate] = useState(getLocalDateString());
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   
   // Load feed settings when profile settings opens
   useEffect(() => {
@@ -216,6 +227,20 @@ const OwnerDashboard = () => {
     setDashboardData(null);
     setLoading(true);
     fetchDashboardData();
+    // Also fetch notifications on mount
+    fetchNotifications();
+  }, []);
+  
+  // Periodically fetch notifications (every 30 seconds)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const data = await fetchNotifications();
+      if (data) {
+        setNotifications(data.notifications || []);
+        setUnreadNotificationCount(data.unread_count || 0);
+      }
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   // Load feed settings when dashboard data loads
