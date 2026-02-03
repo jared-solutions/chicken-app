@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Grid, Typography, TextField, Button } from '@mui/material';
 
-// Use environment variable for API base URL, fallback to empty string for relative paths
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+// Backend API URL - Update this when deploying to production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
 
 // Helper function to get local date in YYYY-MM-DD format (respects timezone)
 const getLocalDateString = () => {
