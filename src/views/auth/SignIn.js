@@ -17,7 +17,7 @@ import {
   VisibilityOff,
   Email,
   Lock,
-  AgriculturalBusiness
+  Agriculture
 } from '@mui/icons-material';
 
 // Backend API URL - Update this when deploying to production
@@ -111,7 +111,7 @@ const SignIn = ({ onSignIn, onSignUp }) => {
       >
         <CardContent>
           <Box textAlign="center" mb={3}>
-            <AgriculturalBusiness 
+            <Agriculture 
               sx={{ 
                 fontSize: 50, 
                 color: '#2e7d32',

@@ -23,7 +23,7 @@ import {
   Email,
   Lock,
   Badge,
-  AgriculturalBusiness
+  Agriculture
 } from '@mui/icons-material';
 import './SignUp.css';
 
@@ -113,7 +113,7 @@ const SignUp = ({ onSignUpSuccess }) => {
       >
         <CardContent>
           <Box textAlign="center" mb={3}>
-            <AgriculturalBusiness 
+            <Agriculture 
               sx={{ 
                 fontSize: 50, 
                 color: '#2e7d32',
