@@ -1168,14 +1168,14 @@ ${data.daily_summaries.map(day =>
           let tableHtml = '<div style="font-family: Arial, sans-serif; max-width: 100%; overflow-x: auto;"><h2>Egg Collection Table - ' + data.date + '</h2>';
 
           // Add each cage with front and back partitions - show all cages even with 0 eggs
-          // Assume we have cages 1 and 2 as mentioned by user
+          // Get cage type from backend data instead of hardcoding
           const cageIds = [2, 1]; // Cage 2 first (combined), then Cage 1 (standard) to match frontend
           cageIds.forEach(cageId => {
             const cage = data.cages ? data.cages.find(c => c.cage_id === cageId) : null;
             tableHtml += '<h3>Cage ' + cageId + '</h3>';
 
-            // Determine cage type and layout - cage 2 is combined, cage 1 is standard
-            const isCombined = cageId === 2; // Cage 2 is combined
+            // Get cage type from backend data, default to standard
+            const isCombined = (cage && cage.cage_type === 'combined') || cageId === 2;
             const boxesPerRow = isCombined ? 8 : 4;
 
             // Front Partition - matching Cage.js structure
