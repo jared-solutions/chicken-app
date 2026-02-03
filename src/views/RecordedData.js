@@ -131,7 +131,9 @@ const RecordedData = () => {
                 </Typography>
 
                 {(() => {
-                  const boxesPerRow = cage.cage_id === 1 ? 8 : 4;
+                  // Standard cage (cage 1): 4 boxes per row
+                  // Combined cage (cage 2): 8 boxes per row
+                  const boxesPerRow = cage.cage_id === 1 ? 4 : 8;
                   return (
                     <>
                       {renderPartition(cage.front_partition, boxesPerRow, "Front Partition")}
