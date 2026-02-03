@@ -6,6 +6,9 @@ import OwnerDashboard from './views/dashboard/OwnerDashboard';
 import RecordedData from './views/RecordedData';
 import './index.css';
 
+// Backend API URL - Update this when deploying to production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
+
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
@@ -180,7 +183,7 @@ const App = () => {
 
       // Send the data to the backend for processing
 
-      const response = await fetch('/api/cages/eggs/submit-daily-collection/', {
+      const response = await fetch(`${API_BASE_URL}/api/cages/eggs/submit-daily-collection/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
