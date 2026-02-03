@@ -131,9 +131,14 @@ const RecordedData = () => {
                 </Typography>
 
                 {(() => {
-                  // Standard cage (cage 1): 4 boxes per row
-                  // Combined cage (cage 2): 8 boxes per row
-                  const boxesPerRow = cage.cage_id === 1 ? 4 : 8;
+                  // Determine boxes per row from actual data
+                  // If any box number > 4, then it's 8 boxes per row
+                  const maxBoxInData = Math.max(
+                    ...cage.front_partition.map(b => b.box),
+                    ...cage.back_partition.map(b => b.box),
+                    0
+                  );
+                  const boxesPerRow = maxBoxInData > 4 ? 8 : 4;
                   return (
                     <>
                       {renderPartition(cage.front_partition, boxesPerRow, "Front Partition")}
