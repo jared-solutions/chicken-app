@@ -30,7 +30,7 @@ import './SignUp.css';
 // Backend API URL - Update this when deploying to production
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://joe-farm-backend.onrender.com';
 
-const SignUp = ({ onSignUpSuccess }) => {
+const SignUp = ({ onSignUpSuccess, onBack }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('worker');
@@ -295,8 +295,27 @@ const SignUp = ({ onSignUpSuccess }) => {
             </Grid>
           </form>
 
+          {/* Back to Login Button */}
+          <Box mt={2} textAlign="center">
+            <Button
+              variant="outlined"
+              onClick={onBack}
+              sx={{
+                color: '#fff',
+                borderColor: 'rgba(255,255,255,0.5)',
+                textTransform: 'none',
+                '&:hover': {
+                  borderColor: '#fff',
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                },
+              }}
+            >
+              ← Back to Login
+            </Button>
+          </Box>
+
           <Box mt={3} textAlign="center">
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body2" sx={{ color: '#fff', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               Note: Your account will need to be approved by an owner before you can log in.
             </Typography>
           </Box>

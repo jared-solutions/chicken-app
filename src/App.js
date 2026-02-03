@@ -209,7 +209,7 @@ const App = () => {
   };
 
   if (isSigningUp) {
-    return <SignUp onSignUpSuccess={handleSignUpSuccess} />;
+    return <SignUp onSignUpSuccess={handleSignUpSuccess} onBack={() => setIsSigningUp(false)} />;
   }
 
   if (!isSignedIn) {
