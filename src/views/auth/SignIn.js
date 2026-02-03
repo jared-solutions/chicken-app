@@ -104,7 +104,7 @@ const SignIn = ({ onSignIn, onSignUp }) => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        px: 2
+        px: { xs: 1, sm: 2 }
       }}
     >
       <Card 
@@ -112,7 +112,7 @@ const SignIn = ({ onSignIn, onSignUp }) => {
         sx={{ 
           width: '100%',
           maxWidth: 450,
-          p: 3,
+          p: { xs: 2, sm: 3 },
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
