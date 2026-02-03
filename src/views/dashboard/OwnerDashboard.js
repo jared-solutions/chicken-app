@@ -86,6 +86,13 @@ const OwnerDashboard = () => {
   // Save dark mode preference when it changes
   useEffect(() => {
     localStorage.setItem('darkMode', darkMode.toString());
+    
+    // Apply dark mode class to body
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }, [darkMode]);
   
   // Load current user data

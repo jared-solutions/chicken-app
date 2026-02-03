@@ -146,3 +146,78 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+body.dark-mode .eggventory-app {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .header {
+  background-color: rgba(30, 30, 30, 0.9);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+body.dark-mode .companyname {
+  color: #fff !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #fff !important;
+}
+
+body.dark-mode .MuiCard-root {
+  background-color: rgba(30, 30, 30, 0.9) !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .MuiPaper-root {
+  background-color: rgba(30, 30, 30, 0.95) !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .MuiTypography-root {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .MuiTextField-root .MuiOutlinedInput-root {
+  background-color: rgba(50, 50, 50, 0.8) !important;
+}
+
+body.dark-mode .MuiTextField-root .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: rgba(50, 50, 50, 0.8) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+body.dark-mode .btn-logout {
+  background-color: #c0392b !important;
+}
+
+body.dark-mode .btn-submit-all {
+  background-color: #27ae60 !important;
+}
+
+body.dark-mode .shade-section {
+  background-color: rgba(30, 30, 30, 0.9) !important;
+  border-color: #27ae60 !important;
+}
+
+body.dark-mode .shade-section h3 {
+  color: #27ae60 !important;
+}
