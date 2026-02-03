@@ -3277,7 +3277,11 @@ ${data.daily_summaries.map(day =>
                   cursor: 'pointer',
                   '&:hover': { bgcolor: '#ffebee' }
                 }}
-                onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/signin'; }}
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  window.location.reload();
+                }}
               >
                 <LogoutIcon sx={{ color: '#e74c3c', mr: 2 }} />
                 <Typography sx={{ color: '#e74c3c' }}>Logout</Typography>
