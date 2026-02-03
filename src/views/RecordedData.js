@@ -135,8 +135,6 @@ const RecordedData = () => {
                   return (
                     <>
                       {renderPartition(cage.front_partition, boxesPerRow, "Front Partition")}
-                      {renderPartition(cage.middle1_partition, boxesPerRow, "Middle1 Partition")}
-                      {renderPartition(cage.middle2_partition, boxesPerRow, "Middle2 Partition")}
                       {renderPartition(cage.back_partition, boxesPerRow, "Back Partition")}
                     </>
                   );

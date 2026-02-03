@@ -1501,8 +1501,8 @@ ${data.daily_summaries.map(day =>
                         let breakdown = [];
 
                         // Always show both cages, even with 0 eggs
-                        breakdown.push(`Cage1: ${cages[1]?.total || 0} (Front: ${cages[1]?.front || 0}, Middle1: ${cages[1]?.middle1 || 0}, Middle2: ${cages[1]?.middle2 || 0}, Back: ${cages[1]?.back || 0})`);
-                        breakdown.push(`Cage2: ${cages[2]?.total || 0} (Front: ${cages[2]?.front || 0}, Middle1: ${cages[2]?.middle1 || 0}, Middle2: ${cages[2]?.middle2 || 0}, Back: ${cages[2]?.back || 0})`);
+                        breakdown.push(`Cage1: ${cages[1]?.total || 0} (Front: ${cages[1]?.front || 0}, Back: ${cages[1]?.back || 0})`);
+                        breakdown.push(`Cage2: ${cages[2]?.total || 0} (Front: ${cages[2]?.front || 0}, Back: ${cages[2]?.back || 0})`);
 
                         if (shade > 0 || true) { // Always show shade, even if 0
                           breakdown.push(`Shade: ${shade}`);
@@ -2937,59 +2937,82 @@ ${data.daily_summaries.map(day =>
             <div style={{fontFamily: 'Arial, sans-serif', maxWidth: '100%', overflowX: 'auto'}}>
               <h2>Egg Collection Table - {eggTableData.date}</h2>
 
-              {/* Add each cage with 4 partitions - show all cages even with 0 eggs */}
+              {/* Add each cage with front and back partitions - show all cages even with 0 eggs */}
               {[2, 1].map(cageId => {  // Cage 2 first (combined), then Cage 1 (standard)
                 const cage = eggTableData.cages ? eggTableData.cages.find(c => c.cage_id === cageId) : null;
                 const isCombined = cageId === 2; // Cage 2 is combined
                 const boxesPerRow = isCombined ? 8 : 4;
-                
-                // Render a partition table
-                const renderPartitionTable = (partitionData, partitionName) => (
-                  <div style={{marginBottom: '20px'}}>
-                    <h4>{partitionName}</h4>
-                    <table style={{borderCollapse: 'collapse', width: '100%', fontSize: '12px', marginBottom: '10px'}}>
-                      <tbody>
-                        {Array.from({length: 4}, (_, row) => (
-                          <tr key={row}>
-                            {Array.from({length: boxesPerRow}, (_, col) => {
-                              const boxIndex = row * boxesPerRow + col;
-                              const box = cage ? (partitionData[boxIndex] || { eggs: 0 }) : { eggs: 0 };
-                              const bgColor = box.eggs > 0 ? '#fff3cd' : '#f8f9fa';
-                              const boxNumber = col + 1;
-                              return (
-                                <td key={col} style={{
-                                  border: '1px solid #ddd',
-                                  padding: '8px',
-                                  textAlign: 'center',
-                                  backgroundColor: bgColor,
-                                  width: '60px'
-                                }}>
-                                  <div style={{fontSize: '10px', marginBottom: '2px'}}>{boxNumber}</div>
-                                  <div style={{fontWeight: 'bold'}}>{box.eggs}</div>
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                );
-                
                 return (
                   <div key={cageId}>
                     <h3>Cage {cageId}</h3>
-                    
-                    {renderPartitionTable(cage?.front_partition || [], "Front Partition")}
-                    {renderPartitionTable(cage?.middle1_partition || [], "Middle1 Partition")}
-                    {renderPartitionTable(cage?.middle2_partition || [], "Middle2 Partition")}
-                    {renderPartitionTable(cage?.back_partition || [], "Back Partition")}
+
+                    {/* Front Partition - matching Cage.js structure */}
+                    <div style={{marginBottom: '20px'}}>
+                      <h4>Front Partition</h4>
+                      <table style={{borderCollapse: 'collapse', width: '100%', fontSize: '12px', marginBottom: '10px'}}>
+                        <tbody>
+                          {/* Create 4 rows x boxesPerRow columns layout (matching Cage.js) */}
+                          {Array.from({length: 4}, (_, row) => (
+                            <tr key={row}>
+                              {Array.from({length: boxesPerRow}, (_, col) => {
+                                const boxIndex = row * boxesPerRow + col;
+                                const box = cage ? (cage.front_partition[boxIndex] || { eggs: 0 }) : { eggs: 0 };
+                                const bgColor = box.eggs > 0 ? '#fff3cd' : '#f8f9fa';
+                                const boxNumber = col + 1; // 1-4 or 1-8 depending on cage type
+                                return (
+                                  <td key={col} style={{
+                                    border: '1px solid #ddd',
+                                    padding: '8px',
+                                    textAlign: 'center',
+                                    backgroundColor: bgColor,
+                                    width: '60px'
+                                  }}>
+                                    <div style={{fontSize: '10px', marginBottom: '2px'}}>{boxNumber}</div>
+                                    <div style={{fontWeight: 'bold'}}>{box.eggs}</div>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Back Partition - matching Cage.js structure */}
+                    <div style={{marginBottom: '20px'}}>
+                      <h4>Back Partition</h4>
+                      <table style={{borderCollapse: 'collapse', width: '100%', fontSize: '12px', marginBottom: '10px'}}>
+                        <tbody>
+                          {/* Create 4 rows x boxesPerRow columns layout (matching Cage.js) */}
+                          {Array.from({length: 4}, (_, row) => (
+                            <tr key={row}>
+                              {Array.from({length: boxesPerRow}, (_, col) => {
+                                const boxIndex = row * boxesPerRow + col;
+                                const box = cage ? (cage.back_partition[boxIndex] || { eggs: 0 }) : { eggs: 0 };
+                                const bgColor = box.eggs > 0 ? '#fff3cd' : '#f8f9fa';
+                                const boxNumber = col + 1; // 1-4 or 1-8 depending on cage type
+                                return (
+                                  <td key={col} style={{
+                                    border: '1px solid #ddd',
+                                    padding: '8px',
+                                    textAlign: 'center',
+                                    backgroundColor: bgColor,
+                                    width: '60px'
+                                  }}>
+                                    <div style={{fontSize: '10px', marginBottom: '2px'}}>{boxNumber}</div>
+                                    <div style={{fontWeight: 'bold'}}>{box.eggs}</div>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
                     {/* Cage Summary */}
                     {(() => {
                       const frontTotal = cage ? cage.front_partition.reduce((sum, box) => sum + box.eggs, 0) : 0;
-                      const middle1Total = cage ? cage.middle1_partition.reduce((sum, box) => sum + box.eggs, 0) : 0;
-                      const middle2Total = cage ? cage.middle2_partition.reduce((sum, box) => sum + box.eggs, 0) : 0;
                       const backTotal = cage ? cage.back_partition.reduce((sum, box) => sum + box.eggs, 0) : 0;
                       const cageTotal = cage ? cage.cage_total : 0;
                       return (
@@ -3004,14 +3027,6 @@ ${data.daily_summaries.map(day =>
                             <tr>
                               <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center', fontWeight: 'bold'}}>Front Partition</td>
                               <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center'}}>{frontTotal}</td>
-                            </tr>
-                            <tr>
-                              <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center', fontWeight: 'bold'}}>Middle1 Partition</td>
-                              <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center'}}>{middle1Total}</td>
-                            </tr>
-                            <tr>
-                              <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center', fontWeight: 'bold'}}>Middle2 Partition</td>
-                              <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center'}}>{middle2Total}</td>
                             </tr>
                             <tr>
                               <td style={{border: '1px solid #ddd', padding: '8px', textAlign: 'center', fontWeight: 'bold'}}>Back Partition</td>

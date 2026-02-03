@@ -77,8 +77,8 @@ const Cage = ({ cage, onEggDataChange }) => {
         })
       }];
     } else {
-      // For standard cage: 4x4 layout (4 rows x 4 columns) per partition - numbered 1-4, repeated 4 times
-      return partitions.map((partition, partitionIndex) => {
+      // For standard cage: 4x4 layout (4 rows x 4 columns) per partition - Front and Back only (2 partitions)
+      return partitions.slice(0, 2).map((partition, partitionIndex) => {
         return {
           ...partition,
           rows: Array.from({ length: 4 }, (_, rowIndex) => {
